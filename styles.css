@@ -36,7 +36,8 @@
 @keyframes logoPulse {
   from { transform: scale(0.96); }
   to { transform: scale(1.04); }
-}body {
+}
+body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
@@ -101,8 +102,8 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
 .card:hover, .tile:hover, .match-card:hover, .shape-tile:hover, .answer-button:hover, .letter:hover, .tab:hover, .primary-button:hover, .ghost-button:hover { transform: translateY(-3px); }
 .card.hidden { background: linear-gradient(135deg, rgba(61, 109, 246, 0.94), rgba(25, 184, 147, 0.94)), repeating-linear-gradient(45deg, transparent, transparent 9px, rgba(255,255,255,0.16) 9px, rgba(255,255,255,0.16) 18px); color: transparent; }
 .card.matched, .match-card.selected, .match-card.matched { border-color: var(--green); background: #eafff9; }
-.logic-panel, .quiz-panel, .word-panel, .typing-panel, .path-panel, .count-panel { display: grid; gap: 18px; }
-.sequence, .answer-row, .letter-bank, .word-slots, .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.logic-panel, .quiz-panel, .word-panel, .typing-panel, .path-panel, .count-panel, .xo-panel, .sort-panel { display: grid; gap: 18px; }
+.sequence, .answer-row, .letter-bank, .word-slots, .sort-slots, .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .seq-item { display: grid; place-items: center; min-width: 82px; height: 82px; padding: 0 10px; border-radius: 18px; background: white; border: 2px solid var(--line); box-shadow: 0 12px 26px rgba(31, 48, 78, 0.1); font-size: clamp(1.25rem, 3vw, 2rem); font-weight: 900; }
 .answer-button, .primary-button, .ghost-button { min-height: 50px; border-radius: 14px; border: 2px solid transparent; padding: 0 18px; font-weight: 900; cursor: pointer; }
 .answer-button { background: white; border-color: var(--line); min-width: 86px; box-shadow: 0 8px 18px rgba(31, 48, 78, 0.08); }
@@ -142,9 +143,32 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
 .path-controls .right { grid-area: right; }
 .path-controls .down { grid-area: down; }
 .path-controls .answer-button { min-width: 64px; min-height: 60px; padding: 0; font-size: 1.6rem; }
+.xo-panel { justify-items: center; }
+.xo-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(72px, 116px));
+  gap: 12px;
+}
+.xo-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 3px solid var(--line);
+  border-radius: 22px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: clamp(2rem, 7vw, 4rem);
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(31, 48, 78, 0.11);
+}
+.xo-cell.x { color: var(--blue); background: #eef4ff; }
+.xo-cell.o { color: var(--pink); background: #fff0f5; }
+.sort-panel { justify-items: center; }
+.sort-slots { justify-content: center; }
 .count-cloud { display: grid; grid-template-columns: repeat(6, minmax(54px, 1fr)); gap: 10px; max-width: 620px; }
 .count-cloud span { display: grid; place-items: center; min-height: 54px; border-radius: 16px; background: white; border: 2px solid var(--line); font-weight: 900; box-shadow: 0 8px 18px rgba(31,48,78,0.08); }
-.audio-player { position: fixed; right: 12px; bottom: 12px; width: 220px; height: 124px; opacity: 0.01; pointer-events: none; overflow: hidden; z-index: 0; }
+.audio-player { position: fixed; right: 12px; bottom: 12px; width: 220px; height: 124px; opacity: 0.06; pointer-events: none; overflow: hidden; z-index: 0; }
 .audio-player iframe { width: 220px; height: 124px; border: 0; }
 .reward-toast { position: fixed; right: 24px; bottom: 24px; z-index: 5; transform: translateY(18px) scale(0.95); opacity: 0; pointer-events: none; padding: 14px 18px; border-radius: 16px; background: #253044; color: white; box-shadow: var(--shadow); font-weight: 900; transition: opacity 0.2s ease, transform 0.2s ease; }
 .reward-toast.show { opacity: 1; transform: translateY(0) scale(1); }
@@ -169,6 +193,7 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
   .memory-grid, .focus-grid, .match-grid, .shape-grid { gap: 8px; }
   .seq-item { min-width: 62px; height: 62px; }
   .path-grid, .count-cloud { grid-template-columns: repeat(4, minmax(48px, 1fr)); }
+  .xo-board { grid-template-columns: repeat(3, minmax(72px, 1fr)); width: 100%; }
   .path-controls { grid-template-columns: repeat(3, 58px); }
   .reward-toast { left: 10px; right: 10px; bottom: 10px; text-align: center; }
 }

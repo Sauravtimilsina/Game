@@ -23,8 +23,8 @@ const mapNodes = document.querySelector("#map-nodes");
 const rewardToast = document.querySelector("#reward-toast");
 
 const TOTAL_LEVELS = 2400;
-const gameOrder = ["memory", "logic", "attention", "math", "words", "science", "typing", "oddOne", "colorCode", "storyOrder", "shapeLab", "treasurePath", "quickCount", "nepaliLetters", "nepaliWords", "nepaliNumbers"];
-const icons = ["SUN", "MOON", "STAR", "TREE", "BELL", "KEY", "BOAT", "BOOK", "KITE", "HEART", "LEAF", "CUP", "RING", "CUBE", "FLAG", "NOTE"];
+const gameOrder = ["memory", "logic", "attention", "math", "words", "science", "typing", "oddOne", "colorCode", "storyOrder", "shapeLab", "treasurePath", "quickCount", "xoGame", "numberSort", "nepaliLetters", "nepaliWords", "nepaliNumbers"];
+const icons = ["SUN", "MOON", "STAR", "TREE", "BELL", "KEY", "BOAT", "BOOK", "KITE", "HEART", "LEAF", "CUP", "RING", "CUBE", "FLAG", "NOTE", "ROCKET", "CROWN", "DRUM", "PEAR"];
 const distractorIcons = ["DOT", "BOX", "TRI", "GEM", "PLUS", "RAY", "ARC"];
 const shapeItems = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR", "DIAMOND", "HEART"];
 const shapeColors = ["red", "blue", "green", "yellow", "purple", "orange"];
@@ -78,9 +78,9 @@ const storySets = [
   { title: "Build a model", steps: ["Sort pieces", "Join base", "Add details", "Test it"] },
 ];
 const baseConfig = {
-  little: { pairs: 4, logicLength: 4, focusSize: 12, mathMax: 9, nepaliChoices: 3, storySteps: 3 },
-  junior: { pairs: 6, logicLength: 5, focusSize: 20, mathMax: 25, nepaliChoices: 4, storySteps: 4 },
-  senior: { pairs: 8, logicLength: 6, focusSize: 30, mathMax: 60, nepaliChoices: 5, storySteps: 4 },
+  little: { pairs: 5, logicLength: 5, focusSize: 16, mathMax: 15, nepaliChoices: 4, storySteps: 3 },
+  junior: { pairs: 8, logicLength: 6, focusSize: 24, mathMax: 40, nepaliChoices: 5, storySteps: 4 },
+  senior: { pairs: 10, logicLength: 7, focusSize: 36, mathMax: 90, nepaliChoices: 6, storySteps: 4 },
 };
 const gameInfo = {
   memory: { title: "Memory Match", skill: "Memory", text: "Flip cards and find every matching pair." },
@@ -96,6 +96,8 @@ const gameInfo = {
   shapeLab: { title: "Shape Lab", skill: "Creativity", text: "Find the shape or color that matches the mission." },
   treasurePath: { title: "Path Quest", skill: "Planning", text: "Choose the next move to reach the treasure." },
   quickCount: { title: "Quick Count", skill: "Maths", text: "Count the targets quickly and choose the number." },
+  xoGame: { title: "X O Challenge", skill: "Strategy", text: "Place X, block O, and try to win the board." },
+  numberSort: { title: "Number Sort", skill: "Logic", text: "Tap the numbers from smallest to biggest." },
   nepaliLetters: { title: "नेपाली अक्षर", skill: "Nepali", text: "Choose the letter that comes next in the Nepali alphabet sequence." },
   nepaliWords: { title: "नेपाली शब्द", skill: "Nepali", text: "Match Nepali words with their English meaning." },
   nepaliNumbers: { title: "नेपाली अंक", skill: "Nepali", text: "Match Nepali numbers with English numbers." },
@@ -110,6 +112,9 @@ const state = {
 };
 
 let roundRandom = Math.random;
+let musicPlayer = null;
+let youtubeApiReady = false;
+let youtubeApiPromise = null;
 
 function hashSeed(text) {
   let hash = 2166136261;
@@ -161,21 +166,73 @@ function config() {
 }
 function speak() {}
 
-function setBackgroundAudio(enabled) {
-  if (!audioPlayer) return;
+function loadYouTubeApi() {
+  if (youtubeApiReady && window.YT?.Player) return Promise.resolve();
+  if (youtubeApiPromise) return youtubeApiPromise;
+  youtubeApiPromise = new Promise((resolve) => {
+    window.onYouTubeIframeAPIReady = () => {
+      youtubeApiReady = true;
+      resolve();
+    };
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
+    script.async = true;
+    document.head.append(script);
+  });
+  return youtubeApiPromise;
+}
+
+function updateAudioButton(enabled) {
   audioToggle.setAttribute("aria-pressed", String(enabled));
   const marker = audioToggle.querySelector(".audio-check");
   if (marker) marker.textContent = enabled ? "✓" : "□";
-  audioPlayer.innerHTML = enabled
-    ? `<iframe title="Background audio" src="https://www.youtube.com/embed/5jca-sWgemI?start=59&autoplay=1&loop=1&playlist=5jca-sWgemI&controls=1&modestbranding=1&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
-    : "";
+}
+
+function setBackgroundAudio(enabled) {
+  if (!audioPlayer) return;
+  updateAudioButton(enabled);
+  if (!enabled) {
+    if (musicPlayer?.stopVideo) musicPlayer.stopVideo();
+    if (musicPlayer?.destroy) musicPlayer.destroy();
+    musicPlayer = null;
+    audioPlayer.innerHTML = "";
+    return;
+  }
+
+  audioPlayer.innerHTML = `<div id="youtube-audio-target"></div>`;
+  loadYouTubeApi().then(() => {
+    musicPlayer = new YT.Player("youtube-audio-target", {
+      width: "220",
+      height: "124",
+      videoId: "5jca-sWgemI",
+      host: "https://www.youtube-nocookie.com",
+      playerVars: {
+        autoplay: 1,
+        start: 59,
+        loop: 1,
+        playlist: "5jca-sWgemI",
+        controls: 1,
+        playsinline: 1,
+        modestbranding: 1,
+      },
+      events: {
+        onReady: (event) => {
+          event.target.unMute();
+          event.target.setVolume(70);
+          event.target.playVideo();
+        },
+        onStateChange: (event) => {
+          if (event.data === YT.PlayerState.ENDED) event.target.seekTo(59);
+        },
+      },
+    });
+  });
 }
 function setFeedback(message, good = true) {
   feedback.textContent = message;
   feedback.style.color = good ? "#126b5b" : "#bb3158";
   if (message) speak(message);
 }
-function isTimeExpired() { return false; }
 function renderMap() {
   const level = currentLevel();
   const windowStart = Math.max(1, level - 3);
@@ -235,6 +292,7 @@ function resetRound() {
   state.moves = 0;
   state.completed = false;
   state.selectedMatch = null;
+  state.storyEntry = [];
   board.className = "game-board";
   board.innerHTML = "";
   setFeedback("");
@@ -254,6 +312,8 @@ function resetRound() {
   if (state.game === "shapeLab") renderShapeLab();
   if (state.game === "treasurePath") renderTreasurePath();
   if (state.game === "quickCount") renderQuickCount();
+  if (state.game === "xoGame") renderXOGame();
+  if (state.game === "numberSort") renderNumberSort();
   if (state.game === "nepaliLetters") renderNepaliLetters();
   if (state.game === "nepaliWords") renderNepaliWords();
   if (state.game === "nepaliNumbers") renderNepaliNumbers();
@@ -576,6 +636,85 @@ function renderQuickCount() {
   board.innerHTML = `<p class="question-text small-question">How many ${target}?</p><div class="count-cloud">${items.map((item) => `<span>${item}</span>`).join("")}</div><div class="answer-row">${makeNumberOptions(count).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div>`;
   wireAnswers(String(count), "quickCount", "Quick Count complete!");
 }
+function renderXOGame() {
+  const cells = Array(9).fill("");
+  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  const aiHard = state.age !== "little" || currentLevel() > 120;
+  board.className = "game-board xo-panel";
+  board.innerHTML = `<div class="xo-board"></div>`;
+  const xoBoard = board.querySelector(".xo-board");
+
+  function winner(mark) { return wins.some((line) => line.every((index) => cells[index] === mark)); }
+  function openCells() { return cells.map((value, index) => value ? null : index).filter((value) => value !== null); }
+  function draw() {
+    xoBoard.innerHTML = cells.map((value, index) => `<button class="xo-cell ${value.toLowerCase()}" data-index="${index}">${value}</button>`).join("");
+    xoBoard.querySelectorAll(".xo-cell").forEach((cell) => cell.addEventListener("click", () => playMove(Number(cell.dataset.index))));
+  }
+  function pickWinningMove(mark) {
+    return openCells().find((index) => {
+      cells[index] = mark;
+      const isWin = winner(mark);
+      cells[index] = "";
+      return isWin;
+    });
+  }
+  function aiMove() {
+    const choices = openCells();
+    if (!choices.length) return;
+    let move = aiHard ? pickWinningMove("O") ?? pickWinningMove("X") : undefined;
+    if (move === undefined && choices.includes(4)) move = 4;
+    if (move === undefined) move = shuffle(choices)[0];
+    cells[move] = "O";
+  }
+  function playMove(index) {
+    if (state.completed || cells[index]) return;
+    state.moves += 1;
+    cells[index] = "X";
+    if (winner("X")) { draw(); finishRound("xoGame", "X O won!"); return; }
+    if (!openCells().length) { draw(); finishRound("xoGame", "Board draw. Strategy star earned!"); return; }
+    aiMove();
+    draw();
+    if (winner("O")) {
+      miss("O blocked you. Try a sharper strategy.");
+      setTimeout(resetRound, 900);
+      return;
+    }
+    if (!openCells().length) finishRound("xoGame", "Board draw. Strategy star earned!");
+    else setFeedback("Your turn.");
+    updateStats();
+  }
+  draw();
+}
+
+function renderNumberSort() {
+  const cfg = config();
+  const count = state.age === "little" ? 4 : state.age === "junior" ? 5 : 6;
+  const max = cfg.mathMax + currentLevel();
+  const numbers = Array.from({ length: count }, () => randomInt(max) + 1);
+  const answer = [...numbers].sort((a, b) => a - b);
+  const picked = [];
+  board.className = "game-board sort-panel";
+  board.innerHTML = `<div class="sort-slots">${answer.map(() => `<span class="slot"></span>`).join("")}</div><div class="answer-row">${shuffle(numbers).map((number, index) => `<button class="answer-button" data-index="${index}" data-number="${number}">${number}</button>`).join("")}</div>`;
+  board.querySelectorAll(".answer-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (state.completed || button.disabled) return;
+      const next = Number(button.dataset.number);
+      state.moves += 1;
+      if (next !== answer[picked.length]) {
+        button.classList.add("wrong");
+        miss("Sort from smallest to biggest.");
+        return;
+      }
+      picked.push(next);
+      button.disabled = true;
+      button.classList.add("correct");
+      board.querySelectorAll(".slot")[picked.length - 1].textContent = String(next);
+      if (picked.length === answer.length) finishRound("numberSort", "Number Sort complete!");
+      else setFeedback("Good. Keep sorting.");
+      updateStats();
+    });
+  });
+}
 function renderNepaliLetters() {
   const cfg = config();
   const start = randomInt((nepaliLetters.length - 4));
@@ -634,7 +773,10 @@ function showHint() {
     colorCode: "Look at the color of the letters, not the word.", storyOrder: "Think first, next, last.",
     shapeLab: "Check the mission, then match either the shape or color.",
     treasurePath: "Move around blocked squares and plan two steps ahead.",
-    quickCount: "Count only the target symbol and ignore the distractors.", nepaliLetters: "Say the Nepali alphabet out loud from the first shown letter.",
+    quickCount: "Count only the target symbol and ignore the distractors.",
+    xoGame: "Take the center or block O before it makes three.",
+    numberSort: "Look for the smallest remaining number each time.",
+    nepaliLetters: "Say the Nepali alphabet out loud from the first shown letter.",
     nepaliWords: "Try saying the Nepali word, then match its meaning.", nepaliNumbers: "Count from १ to १५ and compare the shapes.",
   };
   setFeedback(hints[state.game]);
