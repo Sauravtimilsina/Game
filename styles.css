@@ -44,7 +44,9 @@ h2 { margin: 0; font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1; }
 select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 2px solid var(--line); border-radius: 14px; color: var(--ink); background: white; font-weight: 900; }
 .toggle-field, .stat-pill { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 16px; border-radius: 14px; font-weight: 900; }
 .toggle-field { border: 2px solid rgba(25, 184, 147, 0.22); background: #eafff9; }
-.toggle-field input { width: 20px; height: 20px; accent-color: var(--green); }
+.audio-button { cursor: pointer; color: var(--ink); }
+.audio-button[aria-pressed="true"] { border-color: rgba(25, 184, 147, 0.7); background: #dffff5; }
+.audio-check { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; font-weight: 900; }
 .stat-pill { border: 2px solid rgba(255, 201, 77, 0.4); background: #fff5c8; }
 .stat-pill strong { font-size: 1.6rem; }
 
@@ -118,8 +120,8 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
 .path-controls .answer-button { min-width: 64px; min-height: 60px; padding: 0; font-size: 1.6rem; }
 .count-cloud { display: grid; grid-template-columns: repeat(6, minmax(54px, 1fr)); gap: 10px; max-width: 620px; }
 .count-cloud span { display: grid; place-items: center; min-height: 54px; border-radius: 16px; background: white; border: 2px solid var(--line); font-weight: 900; box-shadow: 0 8px 18px rgba(31,48,78,0.08); }
-.audio-player { position: fixed; width: 1px; height: 1px; left: -9999px; overflow: hidden; }
-.audio-player iframe { width: 1px; height: 1px; border: 0; }
+.audio-player { position: fixed; right: 12px; bottom: 12px; width: 220px; height: 124px; opacity: 0.01; pointer-events: none; overflow: hidden; z-index: 0; }
+.audio-player iframe { width: 220px; height: 124px; border: 0; }
 .reward-toast { position: fixed; right: 24px; bottom: 24px; z-index: 5; transform: translateY(18px) scale(0.95); opacity: 0; pointer-events: none; padding: 14px 18px; border-radius: 16px; background: #253044; color: white; box-shadow: var(--shadow); font-weight: 900; transition: opacity 0.2s ease, transform 0.2s ease; }
 .reward-toast.show { opacity: 1; transform: translateY(0) scale(1); }
 .answer-button.correct, .letter:disabled, .match-card.matched { animation: pop 0.22s ease; }

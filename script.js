@@ -162,8 +162,11 @@ function speak() {}
 
 function setBackgroundAudio(enabled) {
   if (!audioPlayer) return;
+  audioToggle.setAttribute("aria-pressed", String(enabled));
+  const marker = audioToggle.querySelector(".audio-check");
+  if (marker) marker.textContent = enabled ? "✓" : "□";
   audioPlayer.innerHTML = enabled
-    ? `<iframe title="Background audio" src="https://www.youtube.com/embed/5jca-sWgemI?start=59&autoplay=1&loop=1&playlist=5jca-sWgemI&controls=0&modestbranding=1" allow="autoplay; encrypted-media"></iframe>`
+    ? `<iframe title="Background audio" src="https://www.youtube.com/embed/5jca-sWgemI?start=59&autoplay=1&loop=1&playlist=5jca-sWgemI&controls=1&modestbranding=1&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
     : "";
 }
 function setFeedback(message, good = true) {
@@ -642,7 +645,7 @@ tabs.forEach((tab) => {
 ageSelect.addEventListener("change", () => { state.age = ageSelect.value; resetRound(); });
 newRound.addEventListener("click", resetRound);
 hintButton.addEventListener("click", showHint);
-audioToggle.addEventListener("change", () => setBackgroundAudio(audioToggle.checked));
+audioToggle.addEventListener("click", () => setBackgroundAudio(audioToggle.getAttribute("aria-pressed") !== "true"));
 
 updateActiveTab();
 resetRound();
