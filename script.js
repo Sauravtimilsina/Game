@@ -15,11 +15,15 @@ const instructions = document.querySelector("#game-instructions");
 const movesLabel = document.querySelector("#moves-label");
 const scoreLabel = document.querySelector("#score-label");
 const streakLabel = document.querySelector("#streak-label");
+const comboLabel = document.querySelector("#combo-label");
 const feedback = document.querySelector("#feedback");
 const newRound = document.querySelector("#new-round");
 const hintButton = document.querySelector("#hint-button");
 const totalStars = document.querySelector("#total-stars");
 const contactLinks = document.querySelector("#contact-links");
+const missionText = document.querySelector("#mission-text");
+const levelLabel = document.querySelector("#level-label");
+const rewardToast = document.querySelector("#reward-toast");
 
 const icons = ["SUN", "MOON", "STAR", "TREE", "BELL", "KEY", "BOAT", "BOOK", "KITE", "HEART", "LEAF", "CUP"];
 const distractorIcons = ["DOT", "BOX", "TRI", "GEM", "PLUS"];
@@ -64,6 +68,32 @@ const scienceQuestions = [
   { q: "Which part of your body helps you think?", a: "Brain", options: ["Brain", "Knee", "Elbow", "Hair"] },
 ];
 
+const oddOneSets = [
+  { group: ["2", "4", "6", "9"], odd: "9", reason: "9 is odd; the others are even." },
+  { group: ["CAT", "DOG", "COW", "CAR"], odd: "CAR", reason: "CAR is not an animal." },
+  { group: ["RED", "BLUE", "GREEN", "TABLE"], odd: "TABLE", reason: "TABLE is not a color." },
+  { group: ["क", "ख", "ग", "7"], odd: "7", reason: "7 is a number; the others are Nepali letters." },
+  { group: ["SUN", "MOON", "STAR", "PENCIL"], odd: "PENCIL", reason: "PENCIL is not in the sky." },
+];
+const colorChallenges = [
+  { word: "RED", ink: "blue", answer: "BLUE" },
+  { word: "GREEN", ink: "orange", answer: "ORANGE" },
+  { word: "BLUE", ink: "pink", answer: "PINK" },
+  { word: "YELLOW", ink: "green", answer: "GREEN" },
+];
+const storySets = [
+  { title: "Plant a seed", steps: ["Dig soil", "Plant seed", "Water it"] },
+  { title: "Get ready for school", steps: ["Pack bag", "Wear shoes", "Go to school"] },
+  { title: "Make a drawing", steps: ["Pick pencil", "Draw picture", "Color it"] },
+  { title: "Read a book", steps: ["Open book", "Read pages", "Close book"] },
+];
+const missionLines = [
+  "Win any 3 rounds and try a Nepali challenge next.",
+  "Build a streak of 3 to power up your combo.",
+  "Try one brain game, one school game, and one Nepali game.",
+  "Use Hint only when you are truly stuck.",
+  "Switch age levels to find the perfect challenge.",
+];
 const config = {
   little: { pairs: 4, logicLength: 4, focusSize: 12, mathMax: 9, distractors: distractorIcons.slice(0, 3), nepaliChoices: 3 },
   junior: { pairs: 6, logicLength: 5, focusSize: 20, mathMax: 25, distractors: distractorIcons.slice(0, 4), nepaliChoices: 4 },
@@ -78,6 +108,9 @@ const gameInfo = {
   words: { title: "Word Builder", skill: "Words", text: "Tap letters in order to rebuild the hidden word." },
   science: { title: "Science Spark", skill: "Learning", text: "Answer friendly science questions and learn one fact at a time." },
   typing: { title: "Typing Trail", skill: "Learning", text: "Type the phrase exactly to practice reading, focus, and keyboard confidence." },
+  oddOne: { title: "Odd One Out", skill: "Reasoning", text: "Find the item that does not belong with the others." },
+  colorCode: { title: "Color Code", skill: "Attention", text: "Ignore the word meaning. Choose the ink color you see." },
+  storyOrder: { title: "Story Order", skill: "Problem Solving", text: "Tap the steps in the correct order to complete the mini story." },
   nepaliLetters: { title: "नेपाली अक्षर", skill: "Nepali", text: "Choose the letter that comes next in the Nepali alphabet sequence." },
   nepaliWords: { title: "नेपाली शब्द", skill: "Nepali", text: "Match Nepali words with their English meaning." },
   nepaliNumbers: { title: "नेपाली अंक", skill: "Nepali", text: "Match Nepali numbers with English numbers." },
@@ -98,6 +131,9 @@ const state = {
     words: 0,
     science: 0,
     typing: 0,
+    oddOne: 0,
+    colorCode: 0,
+    storyOrder: 0,
     nepaliLetters: 0,
     nepaliWords: 0,
     nepaliNumbers: 0,
@@ -105,6 +141,7 @@ const state = {
   memory: { first: null, lock: false, matched: 0 },
   word: { answer: "", entry: "" },
   selectedMatch: null,
+  storyEntry: [],
 };
 
 function shuffle(items) {
@@ -129,7 +166,12 @@ function updateStats() {
   movesLabel.textContent = `Moves: ${state.moves}`;
   scoreLabel.textContent = `Score: ${state.score}`;
   streakLabel.textContent = `Streak: ${state.streak}`;
-  totalStars.textContent = Object.values(state.stars).reduce((sum, value) => sum + value, 0);
+  const total = Object.values(state.stars).reduce((sum, value) => sum + value, 0);
+  const combo = 1 + Math.floor(state.streak / 3);
+  comboLabel.textContent = `Combo: x${combo}`;
+  levelLabel.textContent = String(1 + Math.floor(total / 5));
+  missionText.textContent = missionLines[total % missionLines.length];
+  totalStars.textContent = total;
   Object.entries(state.stars).forEach(([game, count]) => {
     document.querySelector(`#${game}-stars`).textContent = `${count} ${count === 1 ? "star" : "stars"}`;
   });
@@ -138,10 +180,13 @@ function updateStats() {
 function finishRound(game, message) {
   if (state.completed) return;
   state.completed = true;
-  state.score += 10;
+  const combo = 1 + Math.floor(state.streak / 3);
+  const reward = 10 * combo;
+  state.score += reward;
   state.streak += 1;
   state.stars[game] += 1;
   updateStats();
+  showReward(`+${reward} points | Combo x${combo}`);
   setFeedback(`${message} Next round starts soon.`);
   if (endlessToggle.checked) {
     setTimeout(resetRound, 1150);
@@ -175,6 +220,9 @@ function resetRound() {
   if (state.game === "words") renderWords();
   if (state.game === "science") renderScience();
   if (state.game === "typing") renderTyping();
+  if (state.game === "oddOne") renderOddOne();
+  if (state.game === "colorCode") renderColorCode();
+  if (state.game === "storyOrder") renderStoryOrder();
   if (state.game === "nepaliLetters") renderNepaliLetters();
   if (state.game === "nepaliWords") renderNepaliWords();
   if (state.game === "nepaliNumbers") renderNepaliNumbers();
@@ -376,6 +424,60 @@ function renderTyping() {
   });
 }
 
+function renderOddOne() {
+  const challenge = shuffle(oddOneSets)[0];
+  board.innerHTML = `
+    <div class="quiz-panel">
+      <p class="question-text">Which one is different?</p>
+      <div class="answer-row">${shuffle(challenge.group).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div>
+    </div>
+  `;
+  wireAnswers(challenge.odd, "oddOne", `${challenge.reason} Reasoning star earned!`);
+}
+
+function renderColorCode() {
+  const challenge = shuffle(colorChallenges)[0];
+  const options = shuffle(["RED", "BLUE", "GREEN", "ORANGE", "PINK", "YELLOW"]).slice(0, 4);
+  if (!options.includes(challenge.answer)) options[0] = challenge.answer;
+  board.innerHTML = `
+    <div class="quiz-panel">
+      <p class="question-text color-word" style="color:${challenge.ink}">${challenge.word}</p>
+      <div class="answer-row">${shuffle(options).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div>
+    </div>
+  `;
+  wireAnswers(challenge.answer, "colorCode", "Sharp focus! Color Code star earned!");
+}
+
+function renderStoryOrder() {
+  const story = shuffle(storySets)[0];
+  state.storyEntry = [];
+  board.innerHTML = `
+    <div class="quiz-panel">
+      <p class="question-text">${story.title}</p>
+      <div class="word-slots">${story.steps.map(() => `<div class="slot"></div>`).join("")}</div>
+      <div class="answer-row">${shuffle(story.steps).map((step) => `<button class="answer-button" data-step="${step}">${step}</button>`).join("")}</div>
+    </div>
+  `;
+  board.querySelectorAll(".answer-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (state.completed || button.disabled) return;
+      const next = state.storyEntry.length;
+      state.moves += 1;
+      if (button.dataset.step === story.steps[next]) {
+        state.storyEntry.push(button.dataset.step);
+        board.querySelectorAll(".slot")[next].textContent = button.dataset.step;
+        button.disabled = true;
+        button.classList.add("correct");
+        if (state.storyEntry.length === story.steps.length) finishRound("storyOrder", "Story solved! Sequencing star earned!");
+      } else {
+        button.classList.add("wrong");
+        miss("That step comes later. Think first, middle, last.");
+      }
+      updateStats();
+    });
+  });
+}
+
 function renderNepaliLetters() {
   const start = Math.floor(Math.random() * (nepaliLetters.length - 4));
   const sequence = nepaliLetters.slice(start, start + 3);
@@ -445,6 +547,12 @@ function renderMatchGame(items, leftKey, rightKey, game, successMessage) {
   });
 }
 
+function showReward(message) {
+  rewardToast.textContent = message;
+  rewardToast.classList.add("show");
+  setTimeout(() => rewardToast.classList.remove("show"), 900);
+}
+
 function wireAnswers(answer, game, successMessage) {
   board.querySelectorAll(".answer-button").forEach((button) => {
     button.addEventListener("click", () => {
@@ -472,6 +580,9 @@ function showHint() {
     words: `The word begins with ${state.word.answer ? state.word.answer[0] : "a strong letter"}.`,
     science: "Read every option before choosing.",
     typing: "Check spaces and spelling before pressing Enter.",
+    oddOne: "Ask: what category do most items share?",
+    colorCode: "Look at the color of the letters, not the word.",
+    storyOrder: "Think first, next, last.",
     nepaliLetters: "Say the Nepali alphabet out loud from the first shown letter.",
     nepaliWords: "Try saying the Nepali word, then match its meaning.",
     nepaliNumbers: "Count from १ to १० and compare the shapes.",
@@ -508,3 +619,4 @@ hintButton.addEventListener("click", showHint);
 
 renderContactLinks();
 resetRound();
+

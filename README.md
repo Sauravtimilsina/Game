@@ -13,6 +13,9 @@ It is designed as one friendly place where children can practice memory, logic, 
 - Word Builder: spelling and letter-order practice.
 - Science Spark: simple science quiz questions.
 - Typing Trail: reading and keyboard confidence practice.
+- Odd One Out: category reasoning and flexible thinking.
+- Color Code: focus and self-control challenge inspired by Stroop-style play.
+- Story Order: sequencing, planning, and comprehension practice.
 - नेपाली अक्षर: Nepali alphabet sequence game.
 - नेपाली शब्द: Nepali word and meaning matching game.
 - नेपाली अंक: Nepali number recognition game.
@@ -27,7 +30,7 @@ It is designed as one friendly place where children can practice memory, logic, 
 - 7-10: Junior Thinkers
 - 11-16: Sharp Minds
 
-Difficulty changes by selected age level.
+Difficulty changes by selected age level. Endless rounds, combo rewards, mission prompts, and level feedback help children keep playing without the experience feeling repetitive.
 
 ## Safety and privacy
 
@@ -41,6 +44,7 @@ This website is intentionally simple and child-safe:
 - No cookies created by the app.
 - No localStorage/sessionStorage progress saving.
 - Session stars reset when the page is refreshed.
+- Game rewards, levels, and combos are session-only and are not stored.
 
 The only external network request in the current version is Google Fonts for typography. If you want the site to be fully offline/self-hosted, download and self-host the fonts or remove the Google Fonts links from `index.html`.
 
@@ -91,3 +95,5 @@ Required files:
 - Add offline font files.
 - Add audio pronunciation for Nepali letters and words.
 - Add optional sound effects with a mute button.
+
+

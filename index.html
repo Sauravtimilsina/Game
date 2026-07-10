@@ -16,12 +16,13 @@
         <div class="hero-copy">
           <p class="eyebrow">Safe learning games for ages 4-16</p>
           <h1 id="app-title">BrightMinds Brain Gym</h1>
-          <p class="intro">One happy place for memory, logic, attention, numbers, words, science, typing, and Nepali learning games. No login, no ads, no personal data collection.</p>
+          <p class="intro">One happy place for memory, logic, attention, numbers, words, science, typing, reasoning, story sequencing, and Nepali learning games. No login, no ads, no personal data collection.</p>
           <div class="hero-badges" aria-label="Safety highlights">
             <span>No account</span>
             <span>No tracking</span>
             <span>Endless play</span>
             <span>Nepali learning</span>
+            <span>Combo rewards</span>
           </div>
         </div>
         <div class="hero-art" aria-hidden="true">
@@ -78,9 +79,23 @@
         <button class="tab" data-game="words">Words</button>
         <button class="tab" data-game="science">Science</button>
         <button class="tab" data-game="typing">Typing</button>
+        <button class="tab" data-game="oddOne">Odd One</button>
+        <button class="tab" data-game="colorCode">Color Code</button>
+        <button class="tab" data-game="storyOrder">Story Order</button>
         <button class="tab nepali" data-game="nepaliLetters">क ख ग</button>
         <button class="tab nepali" data-game="nepaliWords">नेपाली शब्द</button>
         <button class="tab nepali" data-game="nepaliNumbers">नेपाली अंक</button>
+      </section>
+
+      <section class="mission-panel" aria-label="Current mission">
+        <div>
+          <p class="eyebrow">Current mission</p>
+          <strong id="mission-text">Complete a round to unlock the next challenge.</strong>
+        </div>
+        <div class="level-card">
+          <span>Level</span>
+          <strong id="level-label">1</strong>
+        </div>
       </section>
 
       <section class="game-stage" aria-live="polite">
@@ -93,6 +108,7 @@
             <span id="moves-label">Moves: 0</span>
             <span id="score-label">Score: 0</span>
             <span id="streak-label">Streak: 0</span>
+            <span id="combo-label">Combo: x1</span>
           </div>
         </div>
         <p class="game-instructions" id="game-instructions"></p>
@@ -102,13 +118,14 @@
           <button id="hint-button" class="ghost-button">Hint</button>
         </div>
         <p class="feedback" id="feedback"></p>
+        <div class="reward-toast" id="reward-toast" role="status" aria-live="polite"></div>
       </section>
 
       <section class="learning-map" aria-labelledby="learning-title">
         <h2 id="learning-title">Learning Map</h2>
         <div class="learning-grid">
-          <article><strong>Brain Skills</strong><span>Memory, logic, focus, problem solving, and flexible thinking.</span></article>
-          <article><strong>School Skills</strong><span>Numbers, spelling, typing, science facts, and reading practice.</span></article>
+          <article><strong>Brain Skills</strong><span>Memory, logic, focus, problem solving, color control, and flexible thinking.</span></article>
+          <article><strong>School Skills</strong><span>Numbers, spelling, typing, science facts, reading practice, and story order.</span></article>
           <article><strong>Nepali Skills</strong><span>क ख ग letters, Nepali words, and Nepali number recognition.</span></article>
           <article><strong>Safe Design</strong><span>No login, no ads, no chat, no personal data collection.</span></article>
         </div>
@@ -125,6 +142,9 @@
           <article><strong>Words</strong><span id="words-stars">0 stars</span></article>
           <article><strong>Science</strong><span id="science-stars">0 stars</span></article>
           <article><strong>Typing</strong><span id="typing-stars">0 stars</span></article>
+          <article><strong>Odd One</strong><span id="oddOne-stars">0 stars</span></article>
+          <article><strong>Color Code</strong><span id="colorCode-stars">0 stars</span></article>
+          <article><strong>Story Order</strong><span id="storyOrder-stars">0 stars</span></article>
           <article><strong>नेपाली अक्षर</strong><span id="nepaliLetters-stars">0 stars</span></article>
           <article><strong>नेपाली शब्द</strong><span id="nepaliWords-stars">0 stars</span></article>
           <article><strong>नेपाली अंक</strong><span id="nepaliNumbers-stars">0 stars</span></article>
@@ -141,3 +161,4 @@
     <script src="script.js"></script>
   </body>
 </html>
+
