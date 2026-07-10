@@ -3,72 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BrightMinds Brain Gym is a safe, no-login brain-training and learning website for children aged 4 to 16, including Nepali learning games." />
+    <meta name="description" content="BrightMinds Brain Gym mini-games." />
     <title>BrightMinds Brain Gym</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="hero" aria-labelledby="app-title">
-        <div class="hero-copy">
-          <p class="eyebrow">Safe learning games for ages 4-16</p>
-          <h1 id="app-title">BrightMinds Brain Gym</h1>
-          <p class="intro">One happy place for memory, logic, attention, numbers, words, science, typing, reasoning, story sequencing, and Nepali learning games. No login, no ads, no personal data collection.</p>
-          <div class="hero-badges" aria-label="Safety highlights">
-            <span>No account</span>
-            <span>No tracking</span>
-            <span>Endless play</span>
-            <span>Nepali learning</span>
-            <span>Combo rewards</span>
+    <main class="app-shell compact-shell">
+      <header class="top-header">
+        <div class="brand-lockup" aria-label="BrightMinds Brain Gym">
+          <div class="logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 96 96" role="img">
+              <rect x="10" y="14" width="76" height="68" rx="22" fill="#ffffff" />
+              <path d="M30 58c-8-2-13-9-13-18 0-11 9-20 20-20 5 0 10 2 13 6 4-4 9-6 15-6 10 0 18 8 18 18 0 9-6 17-15 19" fill="#7bdff2" />
+              <path d="M30 58c2 12 12 20 24 20 13 0 24-10 24-23" fill="#b2f7a7" />
+              <path d="M31 40h12m-8-8v16m23-13 10 10m0-10-10 10" stroke="#253044" stroke-width="5" stroke-linecap="round" />
+              <circle cx="38" cy="61" r="4" fill="#253044" />
+              <circle cx="59" cy="61" r="4" fill="#253044" />
+              <path d="M42 72c5 4 13 4 18 0" fill="none" stroke="#253044" stroke-width="5" stroke-linecap="round" />
+            </svg>
           </div>
+          <h1 id="app-title">BrightMinds Brain Gym</h1>
         </div>
-        <div class="hero-art" aria-hidden="true">
-          <svg viewBox="0 0 360 250" role="img">
-            <defs>
-              <linearGradient id="sunset" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ffd66b" />
-                <stop offset="45%" stop-color="#ff8f70" />
-                <stop offset="100%" stop-color="#3ec6a8" />
-              </linearGradient>
-            </defs>
-            <path d="M28 200 C52 134 97 88 164 90 C214 92 234 128 282 118 C322 111 344 139 342 181 C339 228 286 238 184 231 C91 224 11 237 28 200Z" fill="url(#sunset)" />
-            <circle cx="119" cy="88" r="44" fill="#fff3bf" />
-            <path d="M113 82h54c18 0 33 15 33 33v16h-31v-16c0-1-1-2-2-2h-54V82Z" fill="#2d4663" />
-            <path d="M101 81h19v61h-19c-17 0-31-14-31-31s14-30 31-30Z" fill="#f9f9f9" />
-            <path d="M120 81h19v61h-19z" fill="#3ec6a8" />
-            <circle cx="101" cy="111" r="7" fill="#2d4663" />
-            <circle cx="156" cy="111" r="7" fill="#2d4663" />
-            <path d="M108 132c11 10 28 10 39 0" fill="none" stroke="#2d4663" stroke-width="7" stroke-linecap="round" />
-            <rect x="218" y="72" width="72" height="72" rx="15" fill="#ffffff" />
-            <text x="254" y="120" text-anchor="middle" font-size="38" font-family="Noto Sans Devanagari" font-weight="800" fill="#2d4663">क</text>
-            <rect x="205" y="160" width="44" height="44" rx="12" fill="#fff" />
-            <rect x="258" y="160" width="44" height="44" rx="12" fill="#fff" />
-            <circle cx="227" cy="182" r="10" fill="#ff6f91" />
-            <path d="M280 170l12 24h-24z" fill="#5b7cfa" />
-          </svg>
-        </div>
-      </section>
+      </header>
 
       <section class="control-bar" aria-label="Game setup">
         <label class="field">
-          <span>Age level</span>
+          <span>Age</span>
           <select id="age-select">
-            <option value="little">4-6: Little Learners</option>
-            <option value="junior" selected>7-10: Junior Thinkers</option>
-            <option value="senior">11-16: Sharp Minds</option>
+            <option value="little">4-6</option>
+            <option value="junior" selected>7-10</option>
+            <option value="senior">11-16</option>
           </select>
         </label>
-        <label class="toggle-field">
-          <input id="endless-toggle" type="checkbox" checked />
-          <span>Endless rounds</span>
-        </label>
-        <div class="stat-pill" aria-live="polite">
-          <span>Session stars</span>
-          <strong id="total-stars">0</strong>
-        </div>
+        <label class="toggle-field"><input id="audio-toggle" type="checkbox" /><span>Audio</span></label>
+        <div id="audio-player" class="audio-player" aria-hidden="true"></div>
+        <div class="stat-pill" aria-live="polite"><span>Stars</span><strong id="total-stars">0</strong></div>
       </section>
 
       <section class="game-tabs" aria-label="Choose a brain game">
@@ -82,82 +51,33 @@
         <button class="tab" data-game="oddOne">Odd One</button>
         <button class="tab" data-game="colorCode">Color Code</button>
         <button class="tab" data-game="storyOrder">Story Order</button>
+        <button class="tab" data-game="shapeLab">Shape Lab</button>
+        <button class="tab" data-game="treasurePath">Path Quest</button>
+        <button class="tab" data-game="quickCount">Quick Count</button>
         <button class="tab nepali" data-game="nepaliLetters">क ख ग</button>
         <button class="tab nepali" data-game="nepaliWords">नेपाली शब्द</button>
         <button class="tab nepali" data-game="nepaliNumbers">नेपाली अंक</button>
       </section>
 
-      <section class="mission-panel" aria-label="Current mission">
-        <div>
-          <p class="eyebrow">Current mission</p>
-          <strong id="mission-text">Complete a round to unlock the next challenge.</strong>
-        </div>
-        <div class="level-card">
-          <span>Level</span>
-          <strong id="level-label">1</strong>
-        </div>
+      <section class="game-status" aria-label="Game progress">
+        <article><span id="current-game-label">Memory</span><strong id="virtual-level">1 / 2400</strong></article>
+        <article><span>Accuracy</span><strong id="accuracy-label">100%</strong></article>
       </section>
+
+      <section class="progress-map" aria-label="Progress map"><div id="map-nodes" class="map-nodes"></div></section>
 
       <section class="game-stage" aria-live="polite">
         <div class="game-header">
-          <div>
-            <p class="skill-label" id="skill-label">Memory</p>
-            <h2 id="game-title">Memory Match</h2>
-          </div>
-          <div class="round-stats">
-            <span id="moves-label">Moves: 0</span>
-            <span id="score-label">Score: 0</span>
-            <span id="streak-label">Streak: 0</span>
-            <span id="combo-label">Combo: x1</span>
-          </div>
+          <div><p class="skill-label" id="skill-label">Memory</p><h2 id="game-title">Memory Match</h2></div>
+          <div class="round-stats"><span id="moves-label">Moves: 0</span><span id="score-label">Score: 0</span><span id="streak-label">Streak: 0</span><span id="combo-label">Combo: x1</span></div>
         </div>
         <p class="game-instructions" id="game-instructions"></p>
         <div id="game-board" class="game-board"></div>
-        <div class="actions">
-          <button id="new-round" class="primary-button">New round</button>
-          <button id="hint-button" class="ghost-button">Hint</button>
-        </div>
+        <div class="actions"><button id="new-round" class="primary-button">New round</button><button id="hint-button" class="ghost-button">Hint</button></div>
         <p class="feedback" id="feedback"></p>
         <div class="reward-toast" id="reward-toast" role="status" aria-live="polite"></div>
       </section>
-
-      <section class="learning-map" aria-labelledby="learning-title">
-        <h2 id="learning-title">Learning Map</h2>
-        <div class="learning-grid">
-          <article><strong>Brain Skills</strong><span>Memory, logic, focus, problem solving, color control, and flexible thinking.</span></article>
-          <article><strong>School Skills</strong><span>Numbers, spelling, typing, science facts, reading practice, and story order.</span></article>
-          <article><strong>Nepali Skills</strong><span>क ख ग letters, Nepali words, and Nepali number recognition.</span></article>
-          <article><strong>Safe Design</strong><span>No login, no ads, no chat, no personal data collection.</span></article>
-        </div>
-      </section>
-
-      <section class="progress-panel" aria-labelledby="progress-title">
-        <h2 id="progress-title">Session Skill Stars</h2>
-        <p class="privacy-note">Stars are kept only while this page is open. The website does not collect names, emails, locations, messages, or analytics.</p>
-        <div class="skill-grid">
-          <article><strong>Memory</strong><span id="memory-stars">0 stars</span></article>
-          <article><strong>Logic</strong><span id="logic-stars">0 stars</span></article>
-          <article><strong>Attention</strong><span id="attention-stars">0 stars</span></article>
-          <article><strong>Numbers</strong><span id="math-stars">0 stars</span></article>
-          <article><strong>Words</strong><span id="words-stars">0 stars</span></article>
-          <article><strong>Science</strong><span id="science-stars">0 stars</span></article>
-          <article><strong>Typing</strong><span id="typing-stars">0 stars</span></article>
-          <article><strong>Odd One</strong><span id="oddOne-stars">0 stars</span></article>
-          <article><strong>Color Code</strong><span id="colorCode-stars">0 stars</span></article>
-          <article><strong>Story Order</strong><span id="storyOrder-stars">0 stars</span></article>
-          <article><strong>नेपाली अक्षर</strong><span id="nepaliLetters-stars">0 stars</span></article>
-          <article><strong>नेपाली शब्द</strong><span id="nepaliWords-stars">0 stars</span></article>
-          <article><strong>नेपाली अंक</strong><span id="nepaliNumbers-stars">0 stars</span></article>
-        </div>
-      </section>
-
-      <section class="contact-panel" aria-labelledby="contact-title">
-        <h2 id="contact-title">Bug Reports & Contact</h2>
-        <p>If a bug is found, please contact the maintainer through GitHub Issues. Email and LinkedIn links are ready in the code settings once the exact links are added.</p>
-        <div class="contact-links" id="contact-links"></div>
-      </section>
     </main>
-
     <script src="script.js"></script>
   </body>
 </html>

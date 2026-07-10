@@ -1,36 +1,23 @@
-﻿# Privacy Policy
+﻿# Privacy Notice
 
-BrightMinds Brain Gym is built to be safe for children.
+BrightMinds Brain Gym is designed as a child-safe static prototype.
 
-## Data collection
+## What this app collects
 
-The website does not collect personal data.
+The app does not collect names, email addresses, locations, photos, messages, device identifiers, analytics events, or account information.
 
-It does not ask for:
+## What this app stores
 
-- Name
-- Email
-- Phone number
-- Location
-- School name
-- Photos
-- Messages
-- Account details
+The app does not use cookies, localStorage, or sessionStorage. Stars, score, level, parent controls, audio settings, and playtime limits exist only in memory while the page is open. Refreshing or closing the page resets the session.
 
-## Tracking
+## External services
 
-The app does not include analytics, advertisements, tracking pixels, cookies, or a login system.
+The child-facing interface does not load external fonts, scripts, images, ads, analytics, social widgets, or public links.
 
-## Browser storage
+## Parent and guardian controls
 
-The app does not store game progress in localStorage or sessionStorage. Stars are temporary and reset when the page is refreshed.
+The prototype includes session-only controls for age level, audio guidance, playtime limit, privacy mode, and challenge pace. A production version should add verified parent authentication and server-side privacy settings.
 
-## Third-party services
+## Production requirements
 
-The current version loads fonts from Google Fonts. No app account data is sent because the app has no account system. For a fully self-hosted version, remove Google Fonts links or host the fonts locally.
-
-## Contact
-
-Bug reports can be opened at:
-
-https://github.com/Sauravtimilsina/Game/issues
+A live children's platform should be reviewed for COPPA and other applicable privacy laws before launch. It should minimize personal data, avoid behavioral advertising, keep secrets and business logic on the backend, use HTTPS, protect APIs, validate input server-side, rate-limit abuse, secure databases, back up data, monitor errors safely, and show children only friendly generic error messages.

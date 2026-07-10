@@ -1,74 +1,72 @@
 ﻿# BrightMinds Brain Gym
 
-BrightMinds Brain Gym is a safe, static, browser-based learning and brain-training website for children aged 4 to 16.
+BrightMinds Brain Gym is a privacy-first, static, browser-based brain-training prototype for children aged 4 to 16.
 
-It is designed as one friendly place where children can practice memory, logic, attention, numbers, words, science, typing, and Nepali learning without needing to visit many different websites.
+The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each round generates fresh questions, answer choices, layouts, and distractors so replaying a level does not produce the same experience every time.
 
 ## Games included
 
 - Memory Match: card matching for memory practice.
-- Pattern Logic: sequence completion for logic skills.
-- Focus Finder: target scanning for attention practice.
-- Number Quest: age-scaled arithmetic challenges.
+- Pattern Logic: shape and number sequence completion.
+- Focus Finder: visual scanning and attention control.
+- Number Quest: age-scaled arithmetic and missing-number challenges.
 - Word Builder: spelling and letter-order practice.
 - Science Spark: simple science quiz questions.
 - Typing Trail: reading and keyboard confidence practice.
 - Odd One Out: category reasoning and flexible thinking.
-- Color Code: focus and self-control challenge inspired by Stroop-style play.
+- Color Code: attention control inspired by Stroop-style play.
 - Story Order: sequencing, planning, and comprehension practice.
 - नेपाली अक्षर: Nepali alphabet sequence game.
 - नेपाली शब्द: Nepali word and meaning matching game.
 - नेपाली अंक: Nepali number recognition game.
 
-## Nepali alphabet included
+## Adaptive level system
 
-क ख ग घ ङ च छ ज झ ञ ट ठ ड ढ ण त थ द ध न प फ ब भ म य र ल व श ष स ह क्ष त्र ज्ञ
-
-## Age levels
-
-- 4-6: Little Learners
-- 7-10: Junior Thinkers
-- 11-16: Sharp Minds
-
-Difficulty changes by selected age level. Endless rounds, combo rewards, mission prompts, and level feedback help children keep playing without the experience feeling repetitive.
+- 2,400 virtual levels are tracked in the session UI.
+- The next game is selected automatically during endless play.
+- Difficulty changes based on age level, virtual level, accuracy, streak, and parent-selected pace.
+- Lower-practiced skills are periodically selected so children get balanced practice.
+- Daily challenge routing is included without storing personal data.
 
 ## Safety and privacy
 
-This website is intentionally simple and child-safe:
+This static prototype intentionally keeps the child-facing experience simple:
 
 - No login or account system.
 - No ads.
 - No chat or messaging.
+- No public profiles or leaderboards.
 - No personal data collection.
 - No analytics code.
 - No cookies created by the app.
-- No localStorage/sessionStorage progress saving.
-- Session stars reset when the page is refreshed.
-- Game rewards, levels, and combos are session-only and are not stored.
+- No localStorage or sessionStorage progress saving.
+- No external links in the child-facing interface.
+- No external font, sound, or image requests.
 
-The only external network request in the current version is Google Fonts for typography. If you want the site to be fully offline/self-hosted, download and self-host the fonts or remove the Google Fonts links from `index.html`.
+Parent controls include age level, audio guidance, playtime limit, privacy mode, and challenge pace. All settings are session-only and reset when the page is refreshed.
 
-## Contact and bugs
+## Security notes for production
 
-- GitHub: https://github.com/Sauravtimilsina/Game
-- Bug reports: https://github.com/Sauravtimilsina/Game/issues
+This repository is a static frontend prototype. A production platform should move accounts, parent reports, persistence, secrets, payment logic, anti-abuse rules, and important business logic to a secure backend.
 
-Email and LinkedIn placeholders are in `script.js` under `siteSettings`. Replace these values when you have the exact links:
+Recommended production controls include HTTPS, secure authentication, server-side input validation, protected APIs, rate limiting, secure database access, safe generic error messages, dependency updates, backups, monitoring, audit logging, and regular security review.
 
-```js
-email: "mailto:your-email@example.com",
-linkedin: "https://www.linkedin.com/in/your-linkedin-profile",
-```
+## Research references used
+
+- FTC children's privacy and COPPA guidance.
+- W3C WCAG 2.2 accessibility guidelines.
+- OWASP Top 10 web application security risks.
+- MDN web security guidance.
+
+Research was used only for principles and requirements. The games, questions, visuals, and code are original for this project.
 
 ## How to run locally
 
-Open `index.html` in a browser.
-
-No build step is required because this version uses plain HTML, CSS, and JavaScript.
+Open `index.html` in a browser. No build step is required because this version uses plain HTML, CSS, and JavaScript.
 
 ## Web deployment
 
-Deploy the folder as a static website on GitHub Pages, Netlify, Vercel, Cloudflare Pages, or any standard web host.
+Deploy the folder as a static website on GitHub Pages, Netlify, Vercel, Cloudflare Pages, or any standard static web host.
 
 Required files:
 
@@ -78,22 +76,3 @@ Required files:
 - `README.md`
 - `LICENSE`
 - `PRIVACY.md`
-
-## GitHub Pages quick setup
-
-1. Push this project to GitHub.
-2. Open the repository settings.
-3. Go to Pages.
-4. Choose Deploy from branch.
-5. Select the `main` branch and root folder.
-6. Save.
-
-## Future improvements
-
-- Add more Nepali vocabulary categories.
-- Add parent/teacher printable activity sheets.
-- Add offline font files.
-- Add audio pronunciation for Nepali letters and words.
-- Add optional sound effects with a mute button.
-
-
