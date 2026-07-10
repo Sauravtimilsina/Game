@@ -1,5 +1,6 @@
 ﻿const ageSelect = document.querySelector("#age-select");
 const audioToggle = document.querySelector("#audio-toggle");
+const loadingScreen = document.querySelector("#loading-screen");
 const tabs = [...document.querySelectorAll(".tab")];
 const board = document.querySelector("#game-board");
 const gameStage = document.querySelector(".game-stage");
@@ -646,6 +647,11 @@ ageSelect.addEventListener("change", () => { state.age = ageSelect.value; resetR
 newRound.addEventListener("click", resetRound);
 hintButton.addEventListener("click", showHint);
 audioToggle.addEventListener("click", () => setBackgroundAudio(audioToggle.getAttribute("aria-pressed") !== "true"));
+
+window.addEventListener("load", () => {
+  setTimeout(() => loadingScreen?.classList.add("hide"), 450);
+});
+setTimeout(() => loadingScreen?.classList.add("hide"), 1600);
 
 updateActiveTab();
 resetRound();
