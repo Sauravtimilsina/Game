@@ -2,6 +2,8 @@
 
 BrightMinds Brain Gym is a privacy-first, static, browser-based brain-training prototype for children aged 4 to 16.
 
+Version: 1.1.0
+
 The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each round generates fresh questions, answer choices, layouts, and distractors so replaying a level does not produce the same experience every time.
 
 ## Games included
@@ -11,6 +13,7 @@ The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each
 - Focus Finder: visual scanning with more targets and distractors by level.
 - Number Quest: adaptive arithmetic including addition, subtraction, multiplication, division, missing numbers, and multi-step problems.
 - Math Tug of War: single-player vs bot or two-player turn match with blue Player 1, red Player 2, 20-second questions, timeout/pass rules, three-wrong pass rules, rope movement on correct answers, and first to 10 correct answers wins.
+- Ludo Royal Race: 2-4 player Ludo with user-vs-user or user-vs-bot setup, color choice, 6-to-enter rule, captures, safe squares, exact home rolls, and bot turns.
 - Code Breaker: number-code deduction inspired by popular daily puzzle formats.
 - Word Builder: anagram-style spelling with decoy letters at higher levels.
 - Science Spark: broader science quiz questions from simple facts to harder concepts.
