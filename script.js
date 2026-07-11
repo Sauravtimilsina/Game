@@ -23,7 +23,7 @@ const mapNodes = document.querySelector("#map-nodes");
 const rewardToast = document.querySelector("#reward-toast");
 
 const TOTAL_LEVELS = 2400;
-const gameOrder = ["memory", "logic", "attention", "math", "words", "science", "typing", "oddOne", "colorCode", "storyOrder", "shapeLab", "treasurePath", "quickCount", "xoGame", "numberSort", "nepaliLetters", "nepaliWords", "nepaliNumbers"];
+const gameOrder = ["memory", "logic", "attention", "math", "tugOfWar", "codeBreaker", "words", "science", "typing", "colorCode", "storyOrder", "shapeLab", "treasurePath", "quickCount", "xoGame", "numberSort", "nepaliLetters", "nepaliWords", "nepaliNumbers"];
 const icons = ["SUN", "MOON", "STAR", "TREE", "BELL", "KEY", "BOAT", "BOOK", "KITE", "HEART", "LEAF", "CUP", "RING", "CUBE", "FLAG", "NOTE", "ROCKET", "CROWN", "DRUM", "PEAR"];
 const distractorIcons = ["DOT", "BOX", "TRI", "GEM", "PLUS", "RAY", "ARC"];
 const shapeItems = ["CIRCLE", "SQUARE", "TRIANGLE", "STAR", "DIAMOND", "HEART"];
@@ -38,16 +38,28 @@ const nepaliWords = [
   { word: "घर", meaning: "home" }, { word: "पानी", meaning: "water" }, { word: "फूल", meaning: "flower" }, { word: "किताब", meaning: "book" },
   { word: "आमा", meaning: "mother" }, { word: "बुबा", meaning: "father" }, { word: "साथी", meaning: "friend" }, { word: "विद्यालय", meaning: "school" },
   { word: "पहाड", meaning: "hill" }, { word: "आकाश", meaning: "sky" }, { word: "खेल", meaning: "game" }, { word: "ज्ञान", meaning: "knowledge" },
+  { word: "सूर्य", meaning: "sun" }, { word: "चन्द्रमा", meaning: "moon" }, { word: "नदी", meaning: "river" }, { word: "जंगल", meaning: "forest" },
+  { word: "विज्ञान", meaning: "science" }, { word: "गणित", meaning: "math" }, { word: "प्रश्न", meaning: "question" }, { word: "उत्तर", meaning: "answer" },
 ];
 const wordSets = {
-  little: ["SUN", "CAT", "MAP", "RED", "BUS", "HAT", "CUP", "PEN"],
-  junior: ["BRAIN", "PLANT", "SMILE", "OCEAN", "TRAIN", "BRAVE", "LIGHT", "QUEST"],
-  senior: ["PUZZLE", "PLANET", "MEMORY", "SIGNAL", "VECTOR", "PATTERN", "LOGICAL", "BALANCE"],
+  little: ["SUN", "CAT", "MAP", "RED", "BUS", "HAT", "CUP", "PEN", "FISH", "TREE", "MOON", "BALL"],
+  junior: ["BRAIN", "PLANET", "SMILE", "OCEAN", "TRAIN", "BRAVE", "LIGHT", "QUEST", "PUZZLE", "ROCKET", "FOREST", "NUMBER"],
+  senior: ["ALGORITHM", "FRACTION", "EQUATION", "MEMORY", "SIGNAL", "VECTOR", "PATTERN", "LOGICAL", "BALANCE", "STRATEGY", "DISCOVERY", "CREATIVE"],
 };
 const typingPrompts = {
-  little: ["sun", "cat", "red", "book", "big star"],
-  junior: ["happy learner", "bright mind", "focus and play", "solve the puzzle"],
-  senior: ["practice builds skill", "curiosity makes learning fun", "solve problems step by step", "logic grows with effort"],
+  little: ["sun and moon", "red bus goes", "I can read", "big star", "cat on a mat"],
+  junior: [
+    "happy learners solve bright puzzles",
+    "focus first then answer with care",
+    "the rocket needs a clever pilot",
+    "small clues can unlock big ideas",
+  ],
+  senior: [
+    "Practice builds skill when you notice each mistake and try again.",
+    "Curiosity makes learning fun because every answer opens a new question.",
+    "Solve the pattern, check the evidence, and explain your reasoning clearly.",
+    "A calm mind can handle hard puzzles one careful step at a time.",
+  ],
 };
 const scienceQuestions = [
   { q: "Which planet do we live on?", a: "Earth", options: ["Earth", "Mars", "Jupiter", "Venus"] },
@@ -56,14 +68,14 @@ const scienceQuestions = [
   { q: "What gas do humans breathe in to live?", a: "Oxygen", options: ["Oxygen", "Helium", "Steam", "Dust"] },
   { q: "Which part of your body helps you think?", a: "Brain", options: ["Brain", "Knee", "Elbow", "Hair"] },
   { q: "What tool helps us see tiny things?", a: "Microscope", options: ["Microscope", "Spoon", "Ladder", "Mirror only"] },
-];
-const oddOneSets = [
-  { group: ["2", "4", "6", "9"], odd: "9", reason: "9 is odd; the others are even." },
-  { group: ["CAT", "DOG", "COW", "CAR"], odd: "CAR", reason: "CAR is not an animal." },
-  { group: ["RED", "BLUE", "GREEN", "TABLE"], odd: "TABLE", reason: "TABLE is not a color." },
-  { group: ["क", "ख", "ग", "7"], odd: "7", reason: "7 is a number; the others are Nepali letters." },
-  { group: ["SUN", "MOON", "STAR", "PENCIL"], odd: "PENCIL", reason: "PENCIL is not in the sky." },
-  { group: ["3", "6", "9", "11"], odd: "11", reason: "11 is not a multiple of 3." },
+  { q: "What force pulls objects toward Earth?", a: "Gravity", options: ["Gravity", "Magnet color", "Friction only", "Sound"] },
+  { q: "Which state of matter keeps its own shape?", a: "Solid", options: ["Solid", "Liquid", "Gas", "Steam"] },
+  { q: "What organ pumps blood around the body?", a: "Heart", options: ["Heart", "Lung", "Stomach", "Bone"] },
+  { q: "Which simple machine is a ramp?", a: "Inclined plane", options: ["Inclined plane", "Pulley", "Wheel", "Screw"] },
+  { q: "What process changes liquid water into vapor?", a: "Evaporation", options: ["Evaporation", "Freezing", "Melting", "Condensing"] },
+  { q: "Which particle has a negative electric charge?", a: "Electron", options: ["Electron", "Proton", "Neutron", "Molecule"] },
+  { q: "What do we call animals that eat both plants and animals?", a: "Omnivores", options: ["Omnivores", "Herbivores", "Carnivores", "Minerals"] },
+  { q: "Which body system carries oxygen in blood?", a: "Circulatory", options: ["Circulatory", "Digestive", "Skeletal", "Nervous only"] },
 ];
 const colorChallenges = [
   { word: "RED", ink: "blue", answer: "BLUE" }, { word: "GREEN", ink: "orange", answer: "ORANGE" },
@@ -78,19 +90,20 @@ const storySets = [
   { title: "Build a model", steps: ["Sort pieces", "Join base", "Add details", "Test it"] },
 ];
 const baseConfig = {
-  little: { pairs: 5, logicLength: 5, focusSize: 16, mathMax: 15, nepaliChoices: 4, storySteps: 3 },
-  junior: { pairs: 8, logicLength: 6, focusSize: 24, mathMax: 40, nepaliChoices: 5, storySteps: 4 },
-  senior: { pairs: 10, logicLength: 7, focusSize: 36, mathMax: 90, nepaliChoices: 6, storySteps: 4 },
+  little: { pairs: 5, logicLength: 5, focusSize: 18, mathMax: 18, nepaliChoices: 4, storySteps: 3 },
+  junior: { pairs: 9, logicLength: 7, focusSize: 28, mathMax: 55, nepaliChoices: 5, storySteps: 4 },
+  senior: { pairs: 12, logicLength: 8, focusSize: 42, mathMax: 120, nepaliChoices: 6, storySteps: 4 },
 };
 const gameInfo = {
   memory: { title: "Memory Match", skill: "Memory", text: "Flip cards and find every matching pair." },
   logic: { title: "Pattern Logic", skill: "Logic", text: "Study the sequence, then choose the missing piece." },
   attention: { title: "Focus Finder", skill: "Attention", text: "Find every highlighted target before your focus slips." },
-  math: { title: "Number Quest", skill: "Numbers", text: "Solve the generated number challenge and choose the answer." },
+  math: { title: "Number Quest", skill: "Numbers", text: "Solve multi-step arithmetic that gets sharper as your level climbs." },
+  tugOfWar: { title: "Math Tug of War", skill: "Numbers", text: "Single player races the bot. Multiplayer lets two players pull the rope by solving first." },
+  codeBreaker: { title: "Code Breaker", skill: "Logic", text: "Guess the secret number code using exact and close-position clues." },
   words: { title: "Word Builder", skill: "Words", text: "Tap letters in order to rebuild the hidden word." },
   science: { title: "Science Spark", skill: "Learning", text: "Answer a friendly science question and learn one fact at a time." },
   typing: { title: "Typing Trail", skill: "Learning", text: "Type the phrase exactly to practice reading, focus, and keyboard confidence." },
-  oddOne: { title: "Odd One Out", skill: "Reasoning", text: "Find the item that does not belong with the others." },
   colorCode: { title: "Color Code", skill: "Attention", text: "Ignore the word meaning. Choose the ink color you see." },
   storyOrder: { title: "Story Order", skill: "Problem Solving", text: "Tap the steps in the correct order to complete the mini story." },
   shapeLab: { title: "Shape Lab", skill: "Creativity", text: "Find the shape or color that matches the mission." },
@@ -112,9 +125,9 @@ const state = {
 };
 
 let roundRandom = Math.random;
-let musicPlayer = null;
-let youtubeApiReady = false;
-let youtubeApiPromise = null;
+let audioContext = null;
+let audioOscillator = null;
+let audioGain = null;
 
 function hashSeed(text) {
   let hash = 2166136261;
@@ -156,9 +169,9 @@ function config() {
   const base = baseConfig[state.age];
   const boost = getDifficultyBoost();
   return {
-    pairs: clamp(base.pairs + Math.floor(boost / 2), 3, 10),
-    logicLength: clamp(base.logicLength + Math.floor(boost / 2), 3, 8),
-    focusSize: clamp(base.focusSize + boost * 3, 9, 42),
+    pairs: clamp(base.pairs + Math.floor(boost / 2), 3, 16),
+    logicLength: clamp(base.logicLength + Math.floor(boost / 2), 3, 10),
+    focusSize: clamp(base.focusSize + boost * 4, 9, 64),
     mathMax: base.mathMax + boost * (state.age === "senior" ? 18 : 8),
     nepaliChoices: clamp(base.nepaliChoices + Math.floor(boost / 3), 3, 6),
     storySteps: clamp(base.storySteps + Math.floor(boost / 4), 3, 4),
@@ -166,67 +179,29 @@ function config() {
 }
 function speak() {}
 
-function loadYouTubeApi() {
-  if (youtubeApiReady && window.YT?.Player) return Promise.resolve();
-  if (youtubeApiPromise) return youtubeApiPromise;
-  youtubeApiPromise = new Promise((resolve) => {
-    window.onYouTubeIframeAPIReady = () => {
-      youtubeApiReady = true;
-      resolve();
-    };
-    const script = document.createElement("script");
-    script.src = "https://www.youtube.com/iframe_api";
-    script.async = true;
-    document.head.append(script);
-  });
-  return youtubeApiPromise;
-}
-
 function updateAudioButton(enabled) {
   audioToggle.setAttribute("aria-pressed", String(enabled));
   const marker = audioToggle.querySelector(".audio-check");
-  if (marker) marker.textContent = enabled ? "✓" : "□";
+  if (marker) marker.textContent = enabled ? "ON" : "[ ]";
 }
 
 function setBackgroundAudio(enabled) {
-  if (!audioPlayer) return;
   updateAudioButton(enabled);
   if (!enabled) {
-    if (musicPlayer?.stopVideo) musicPlayer.stopVideo();
-    if (musicPlayer?.destroy) musicPlayer.destroy();
-    musicPlayer = null;
-    audioPlayer.innerHTML = "";
+    if (audioOscillator) audioOscillator.stop();
+    audioOscillator = null;
+    audioGain = null;
     return;
   }
 
-  audioPlayer.innerHTML = `<div id="youtube-audio-target"></div>`;
-  loadYouTubeApi().then(() => {
-    musicPlayer = new YT.Player("youtube-audio-target", {
-      width: "220",
-      height: "124",
-      videoId: "5jca-sWgemI",
-      host: "https://www.youtube-nocookie.com",
-      playerVars: {
-        autoplay: 1,
-        start: 59,
-        loop: 1,
-        playlist: "5jca-sWgemI",
-        controls: 1,
-        playsinline: 1,
-        modestbranding: 1,
-      },
-      events: {
-        onReady: (event) => {
-          event.target.unMute();
-          event.target.setVolume(70);
-          event.target.playVideo();
-        },
-        onStateChange: (event) => {
-          if (event.data === YT.PlayerState.ENDED) event.target.seekTo(59);
-        },
-      },
-    });
-  });
+  audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+  audioOscillator = audioContext.createOscillator();
+  audioGain = audioContext.createGain();
+  audioOscillator.type = "sine";
+  audioOscillator.frequency.value = 220;
+  audioGain.gain.value = 0.035;
+  audioOscillator.connect(audioGain).connect(audioContext.destination);
+  audioOscillator.start();
 }
 function setFeedback(message, good = true) {
   feedback.textContent = message;
@@ -303,10 +278,11 @@ function resetRound() {
   if (state.game === "logic") renderLogic();
   if (state.game === "attention") renderAttention();
   if (state.game === "math") renderMath();
+  if (state.game === "tugOfWar") renderTugOfWar();
+  if (state.game === "codeBreaker") renderCodeBreaker();
   if (state.game === "words") renderWords();
   if (state.game === "science") renderScience();
   if (state.game === "typing") renderTyping();
-  if (state.game === "oddOne") renderOddOne();
   if (state.game === "colorCode") renderColorCode();
   if (state.game === "storyOrder") renderStoryOrder();
   if (state.game === "shapeLab") renderShapeLab();
@@ -345,7 +321,7 @@ function wireAnswers(answer, game, successMessage) {
 function renderMemory() {
   const cfg = config();
   const cards = shuffle(icons.slice(0, cfg.pairs).flatMap((symbol) => [symbol, symbol]));
-  const cols = state.age === "little" ? 4 : state.age === "junior" ? 4 : 5;
+  const cols = state.age === "little" ? 4 : state.age === "junior" ? 5 : 6;
   board.className = "game-board memory-grid";
   board.style.setProperty("--cols", cols);
   state.memory = { first: null, lock: false, matched: 0 };
@@ -405,12 +381,12 @@ function renderLogic() {
 }
 function renderAttention() {
   const cfg = config();
-  const targetCount = state.age === "little" ? 3 : state.age === "junior" ? 5 : 7;
+  const targetCount = clamp((state.age === "little" ? 3 : state.age === "junior" ? 6 : 9) + Math.floor(getChallengeTier() / 2), 3, 16);
   const target = shuffle(["STAR", "KEY", "LEAF"])[0];
   const targetPositions = new Set(shuffle([...Array(cfg.focusSize).keys()]).slice(0, targetCount));
   let found = 0;
   board.className = "game-board focus-grid";
-  board.style.setProperty("--cols", state.age === "little" ? 4 : state.age === "junior" ? 5 : 6);
+  board.style.setProperty("--cols", state.age === "little" ? 4 : state.age === "junior" ? 6 : 8);
   Array.from({ length: cfg.focusSize }).forEach((_, index) => {
     const isTarget = targetPositions.has(index);
     const button = document.createElement("button");
@@ -434,35 +410,180 @@ function renderAttention() {
     board.append(button);
   });
 }
-function renderMath() {
-  const max = config().mathMax;
-  const a = randomInt(max) + 1;
-  const b = randomInt(max) + 1;
-  const variant = currentLevel() % (state.age === "little" ? 2 : 4);
-  let prompt;
-  let answer;
+function getChallengeTier() {
+  const ageTier = state.age === "little" ? 0 : state.age === "junior" ? 1 : 2;
+  return clamp(ageTier + Math.floor(currentLevel() / 80) + Math.floor(state.streak / 4), 0, 9);
+}
+function makeArithmeticChallenge() {
+  const tier = getChallengeTier();
+  const max = config().mathMax + tier * 12;
+  const a = randomInt(max) + 2;
+  const b = randomInt(max) + 2;
+  const c = randomInt(Math.max(6, Math.floor(max / 3))) + 2;
+  const variantLimit = state.age === "little" ? 3 : state.age === "junior" ? 6 : 8;
+  const variant = (currentLevel() + tier + randomInt(variantLimit)) % variantLimit;
   if (variant === 1) {
-    answer = Math.max(a, b) - Math.min(a, b);
-    prompt = `${Math.max(a, b)} - ${Math.min(a, b)} = ?`;
-  } else if (variant === 2) {
-    const factor = randomInt(9) + 2;
-    answer = Math.min(12, Math.floor(a / 3) + 2) * factor;
-    prompt = `${Math.min(12, Math.floor(a / 3) + 2)} x ${factor} = ?`;
-  } else if (variant === 3) {
-    answer = a;
-    prompt = `? + ${b} = ${a + b}`;
-  } else {
-    answer = a + b;
-    prompt = `${a} + ${b} = ?`;
+    const big = Math.max(a, b) + c;
+    const small = Math.min(a, b);
+    return { prompt: `${big} - ${small} = ?`, answer: big - small };
   }
-  board.innerHTML = `<div class="quiz-panel"><p class="question-text">${prompt}</p><div class="answer-row">${makeNumberOptions(answer).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div></div>`;
-  wireAnswers(String(answer), "math", "Number quest complete. Math star earned!");
+  if (variant === 2) {
+    const x = randomInt(state.age === "little" ? 5 : 11) + 2;
+    const y = randomInt(state.age === "little" ? 5 : 12) + 2;
+    return { prompt: `${x} x ${y} = ?`, answer: x * y };
+  }
+  if (variant === 3) return { prompt: `? + ${b} = ${a + b}`, answer: a };
+  if (variant === 4) {
+    const divisor = randomInt(10) + 2;
+    const quotient = randomInt(12 + tier) + 2;
+    return { prompt: `${divisor * quotient} / ${divisor} = ?`, answer: quotient };
+  }
+  if (variant === 5) return { prompt: `(${a} + ${c}) - ${b} = ?`, answer: a + c - b };
+  if (variant === 6) {
+    const x = randomInt(9) + 2;
+    const y = randomInt(9) + 2;
+    return { prompt: `${x} x ${y} + ${c} = ?`, answer: x * y + c };
+  }
+  if (variant === 7) {
+    const divisor = randomInt(8) + 2;
+    const quotient = randomInt(14) + 3;
+    return { prompt: `? / ${divisor} = ${quotient}`, answer: divisor * quotient };
+  }
+  return { prompt: `${a} + ${b} = ?`, answer: a + b };
+}
+function makeHardNumberOptions(answer, count = 5) {
+  const options = new Set([answer]);
+  const offsets = shuffle([-24, -18, -12, -9, -6, -4, -3, -2, -1, 1, 2, 3, 4, 6, 9, 12, 18, 24]);
+  offsets.forEach((offset) => {
+    if (options.size < count) options.add(answer + offset);
+  });
+  while (options.size < count) options.add(answer + randomInt(41) - 20);
+  return shuffle([...options]);
+}
+function renderMath() {
+  const challenge = makeArithmeticChallenge();
+  const optionCount = state.age === "little" ? 4 : getChallengeTier() > 3 ? 6 : 5;
+  board.innerHTML = `<div class="quiz-panel challenge-panel"><p class="question-text">${challenge.prompt}</p><p class="micro-copy">Level pressure: ${getChallengeTier() + 1}</p><div class="answer-row">${makeHardNumberOptions(challenge.answer, optionCount).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div></div>`;
+  wireAnswers(String(challenge.answer), "math", "Number quest complete. Math star earned!");
+}
+function renderTugOfWar() {
+  const target = state.age === "little" ? 2 : 3;
+  let rope = 0;
+  let mode = "single";
+  let botTimer = null;
+  board.className = "game-board tug-panel";
+  board.innerHTML = `<div class="mode-row"><button class="answer-button active" data-mode="single">Single vs Bot</button><button class="answer-button" data-mode="multi">Two Players</button></div><div class="tug-arena"><div class="tug-side p1">Player 1</div><div class="rope-track"><span class="rope-marker" style="--rope:0"></span></div><div class="tug-side p2">Bot</div></div><div class="tug-question"></div>`;
+  const modeButtons = [...board.querySelectorAll("[data-mode]")];
+  const marker = board.querySelector(".rope-marker");
+  const p2Label = board.querySelector(".p2");
+  const questionBox = board.querySelector(".tug-question");
+  function updateRope() {
+    marker.style.setProperty("--rope", rope);
+    if (rope >= target) finishRound("tugOfWar", "Player 1 pulled the rope across!");
+    if (rope <= -target) {
+      if (mode === "single") { miss("The bot pulled faster. New tug starts now."); setTimeout(renderTugOfWar, 900); }
+      else finishRound("tugOfWar", "Player 2 pulled the rope across!");
+    }
+  }
+  function nextProblem() {
+    if (state.completed) return;
+    clearTimeout(botTimer);
+    const challenge = makeArithmeticChallenge();
+    const options = makeHardNumberOptions(challenge.answer, state.age === "little" ? 4 : 5);
+    const rows = mode === "single" ? ["Player 1"] : ["Player 1", "Player 2"];
+    questionBox.innerHTML = `<p class="question-text small-question">${challenge.prompt}</p>${rows.map((name, row) => `<div class="player-answer-row"><strong>${name}</strong>${options.map((item) => `<button class="answer-button" data-player="${row === 0 ? 1 : 2}" data-answer="${item}">${item}</button>`).join("")}</div>`).join("")}`;
+    questionBox.querySelectorAll("[data-answer]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (state.completed) return;
+        state.moves += 1;
+        if (Number(button.dataset.answer) === challenge.answer) {
+          clearTimeout(botTimer);
+          rope += button.dataset.player === "1" ? 1 : -1;
+          setFeedback(`${button.dataset.player === "1" ? "Player 1" : "Player 2"} pulls the rope!`);
+          updateStats();
+          updateRope();
+          if (!state.completed) setTimeout(nextProblem, 450);
+        } else {
+          button.classList.add("wrong");
+          miss("Wrong pull. The other side gets a chance.");
+        }
+      });
+    });
+    if (mode === "single") {
+      const botDelay = clamp(5200 - getChallengeTier() * 380 - state.streak * 80, 1800, 5600);
+      botTimer = setTimeout(() => { rope -= 1; setFeedback("Bot solved one. Pull back fast!", false); updateRope(); if (!state.completed) nextProblem(); }, botDelay);
+    }
+  }
+  modeButtons.forEach((button) => button.addEventListener("click", () => {
+    mode = button.dataset.mode;
+    modeButtons.forEach((item) => item.classList.toggle("active", item === button));
+    p2Label.textContent = mode === "single" ? "Bot" : "Player 2";
+    rope = 0;
+    updateRope();
+    nextProblem();
+  }));
+  nextProblem();
+}
+function renderCodeBreaker() {
+  const length = state.age === "little" ? 3 : getChallengeTier() > 4 ? 5 : 4;
+  const maxDigit = state.age === "little" ? 5 : 9;
+  const secret = Array.from({ length }, () => String(randomInt(maxDigit + 1))).join("");
+  const maxGuesses = state.age === "little" ? 7 : getChallengeTier() > 4 ? 5 : 6;
+  let guesses = 0;
+  board.className = "game-board code-panel";
+  board.innerHTML = `<div class="quiz-panel"><p class="question-text small-question">Secret ${length}-digit code</p><input class="typing-input code-input" inputmode="numeric" maxlength="${length}" aria-label="Code guess" autocomplete="off" /><div class="answer-row"><button class="answer-button" data-action="guess">Guess</button></div><div class="code-history"></div></div>`;
+  const input = board.querySelector(".code-input");
+  const history = board.querySelector(".code-history");
+  const button = board.querySelector("[data-action='guess']");
+  function scoreGuess(guess) {
+    let exact = 0;
+    let close = 0;
+    const secretLeft = [];
+    const guessLeft = [];
+    for (let i = 0; i < length; i += 1) {
+      if (guess[i] === secret[i]) exact += 1;
+      else { secretLeft.push(secret[i]); guessLeft.push(guess[i]); }
+    }
+    guessLeft.forEach((digit) => {
+      const index = secretLeft.indexOf(digit);
+      if (index >= 0) { close += 1; secretLeft.splice(index, 1); }
+    });
+    return { exact, close };
+  }
+  function submit() {
+    if (state.completed) return;
+    const guess = input.value.replace(/\D/g, "").slice(0, length);
+    if (guess.length !== length) { setFeedback(`Enter ${length} digits.`, false); return; }
+    guesses += 1;
+    state.moves += 1;
+    const result = scoreGuess(guess);
+    const row = document.createElement("div");
+    const guessLabel = document.createElement("strong");
+    const exactLabel = document.createElement("span");
+    const closeLabel = document.createElement("span");
+    row.className = "code-row";
+    guessLabel.textContent = guess;
+    exactLabel.textContent = `${result.exact} exact`;
+    closeLabel.textContent = `${result.close} close`;
+    row.append(guessLabel, exactLabel, closeLabel);
+    history.prepend(row);
+    input.value = "";
+    if (result.exact === length) finishRound("codeBreaker", "Code cracked. Logic star earned!");
+    else if (guesses >= maxGuesses) { miss(`Code escaped: ${secret}. Try the next one.`); setTimeout(renderCodeBreaker, 1200); }
+    else setFeedback(`${maxGuesses - guesses} guesses left.`);
+    updateStats();
+  }
+  button.addEventListener("click", submit);
+  input.addEventListener("keydown", (event) => { if (event.key === "Enter") submit(); });
+  input.focus();
 }
 function renderWords() {
   const answer = shuffle(wordSets[state.age])[0];
-  const letters = shuffle(answer.split(""));
+  const tier = getChallengeTier();
+  const decoys = tier > 2 ? shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").filter((letter) => !answer.includes(letter))).slice(0, state.age === "senior" ? 4 : 2) : [];
+  const letters = shuffle([...answer.split(""), ...decoys]);
   state.word = { answer, entry: "" };
-  board.innerHTML = `<div class="word-panel"><div class="word-slots">${answer.split("").map(() => `<div class="slot"></div>`).join("")}</div><div class="letter-bank">${letters.map((letter, index) => `<button class="letter" data-index="${index}" data-letter="${letter}">${letter}</button>`).join("")}</div></div>`;
+  board.innerHTML = `<div class="word-panel"><p class="question-text small-question">Build: ${shuffle(answer.split("")).join("")}</p><div class="word-slots">${answer.split("").map(() => `<div class="slot"></div>`).join("")}</div><div class="letter-bank">${letters.map((letter, index) => `<button class="letter" data-index="${index}" data-letter="${letter}">${letter}</button>`).join("")}</div></div>`;
   board.querySelectorAll(".letter").forEach((button) => {
     button.addEventListener("click", () => {
       if (state.completed || button.disabled) return;
@@ -472,12 +593,12 @@ function renderWords() {
       button.disabled = true;
       state.moves += 1;
       if (!answer.startsWith(state.word.entry)) {
-        miss("That word starts differently. New letters coming up.");
+        miss("That build went off track. The word resets with new letter order.");
         setTimeout(renderWords, 760);
       } else if (state.word.entry === answer) {
         board.querySelectorAll(".letter").forEach((item) => item.disabled = true);
         finishRound("words", `You built ${answer}. Word star earned!`);
-      } else setFeedback("Good start. Keep building.");
+      } else setFeedback("Good build. Keep going.");
       updateStats();
     });
   });
@@ -501,11 +622,6 @@ function renderTyping() {
   }
   check.addEventListener("click", submit);
   input.addEventListener("keydown", (event) => { if (event.key === "Enter") submit(); });
-}
-function renderOddOne() {
-  const challenge = shuffle(oddOneSets)[0];
-  board.innerHTML = `<div class="quiz-panel"><p class="question-text">Which one is different?</p><div class="answer-row">${shuffle(challenge.group).map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("")}</div></div>`;
-  wireAnswers(challenge.odd, "oddOne", `${challenge.reason} Reasoning star earned!`);
 }
 function renderColorCode() {
   const challenge = shuffle(colorChallenges)[0];
@@ -576,19 +692,31 @@ function renderShapeLab() {
 }
 
 function renderTreasurePath() {
-  const size = state.age === "little" ? 4 : 5;
+  const tier = getChallengeTier();
+  const size = state.age === "little" ? 4 : tier > 4 ? 6 : 5;
   const treasure = { row: size - 1, col: size - 1 };
   let player = { row: 0, col: 0 };
+  const route = new Set(["0-0"]);
+  let walker = { row: 0, col: 0 };
+  while (walker.row !== treasure.row || walker.col !== treasure.col) {
+    const canDown = walker.row < treasure.row;
+    const canRight = walker.col < treasure.col;
+    if (canDown && (!canRight || random() < 0.5)) walker.row += 1;
+    else if (canRight) walker.col += 1;
+    route.add(`${walker.row}-${walker.col}`);
+  }
   const rocks = new Set();
-  const rockCount = state.age === "little" ? 2 : state.age === "junior" ? 4 : 6;
-  while (rocks.size < rockCount) {
+  const rockTarget = clamp((state.age === "little" ? 3 : 6) + tier, 3, Math.floor(size * size * 0.38));
+  while (rocks.size < rockTarget) {
     const row = randomInt(size);
     const col = randomInt(size);
-    if ((row === 0 && col === 0) || (row === treasure.row && col === treasure.col) || row === col) continue;
-    rocks.add(`${row}-${col}`);
+    const key = `${row}-${col}`;
+    if (route.has(key) || key === "0-0" || key === `${treasure.row}-${treasure.col}`) continue;
+    rocks.add(key);
   }
+  const moveLimit = route.size + (state.age === "little" ? 5 : tier > 4 ? 2 : 4);
   board.className = "game-board path-panel";
-  board.innerHTML = `<div class="path-grid" style="--path-size:${size}"></div><div class="path-controls" aria-label="Path controls"><button class="answer-button up" data-move="up">↑</button><button class="answer-button left" data-move="left">←</button><button class="answer-button right" data-move="right">→</button><button class="answer-button down" data-move="down">↓</button></div>`;
+  board.innerHTML = `<p class="micro-copy">Reach treasure in ${moveLimit} moves. Rocks block the route.</p><div class="path-grid" style="--path-size:${size}"></div><div class="path-controls" aria-label="Path controls"><button class="answer-button up" data-move="up">↑</button><button class="answer-button left" data-move="left">←</button><button class="answer-button right" data-move="right">→</button><button class="answer-button down" data-move="down">↓</button></div>`;
   const grid = board.querySelector(".path-grid");
   function draw() {
     grid.innerHTML = "";
@@ -597,7 +725,7 @@ function renderTreasurePath() {
         const cell = document.createElement("div");
         cell.className = "path-cell";
         if (rocks.has(`${row}-${col}`)) { cell.classList.add("rock"); cell.textContent = "X"; }
-        if (row === treasure.row && col === treasure.col) { cell.classList.add("treasure"); cell.textContent = "★"; }
+        if (row === treasure.row && col === treasure.col) { cell.classList.add("treasure"); cell.textContent = "STAR"; }
         if (row === player.row && col === player.col) { cell.classList.add("player"); cell.textContent = "GO"; }
         grid.append(cell);
       }
@@ -614,12 +742,13 @@ function renderTreasurePath() {
       if (button.dataset.move === "right") next.col += 1;
       state.moves += 1;
       if (next.row < 0 || next.col < 0 || next.row >= size || next.col >= size || rocks.has(`${next.row}-${next.col}`)) {
-        miss("Blocked. Choose a clear path.");
+        miss("Blocked. Plan around rocks before moving.");
       } else {
         player = next;
         draw();
-        if (player.row === treasure.row && player.col === treasure.col) finishRound("treasurePath", "Treasure found!");
-        else setFeedback("Good move.");
+        if (player.row === treasure.row && player.col === treasure.col) finishRound("treasurePath", "Treasure found with smart planning!");
+        else if (state.moves >= moveLimit) { miss("Move limit reached. New path challenge coming."); setTimeout(renderTreasurePath, 900); }
+        else setFeedback(`${moveLimit - state.moves} moves left.`);
       }
       updateStats();
     });
@@ -662,9 +791,31 @@ function renderXOGame() {
     const choices = openCells();
     if (!choices.length) return;
     let move = aiHard ? pickWinningMove("O") ?? pickWinningMove("X") : undefined;
+    if (move === undefined && aiHard && getChallengeTier() > 3) {
+      let bestScore = -Infinity;
+      choices.forEach((choice) => {
+        cells[choice] = "O";
+        const score = minimax(false, 0);
+        cells[choice] = "";
+        if (score > bestScore) { bestScore = score; move = choice; }
+      });
+    }
     if (move === undefined && choices.includes(4)) move = 4;
     if (move === undefined) move = shuffle(choices)[0];
     cells[move] = "O";
+  }
+  function minimax(isBotTurn, depth) {
+    if (winner("O")) return 10 - depth;
+    if (winner("X")) return depth - 10;
+    const choices = openCells();
+    if (!choices.length) return 0;
+    const scores = choices.map((choice) => {
+      cells[choice] = isBotTurn ? "O" : "X";
+      const score = minimax(!isBotTurn, depth + 1);
+      cells[choice] = "";
+      return score;
+    });
+    return isBotTurn ? Math.max(...scores) : Math.min(...scores);
   }
   function playMove(index) {
     if (state.completed || cells[index]) return;
@@ -725,7 +876,7 @@ function renderNepaliLetters() {
   wireAnswers(answer, "nepaliLetters", "राम्रो! नेपाली अक्षर सिक्दै छौ!");
 }
 function renderMatchGame(items, leftKey, rightKey, game, successMessage) {
-  const count = state.age === "little" ? 3 : state.age === "junior" ? 4 : 5;
+  const count = clamp((state.age === "little" ? 3 : state.age === "junior" ? 5 : 6) + Math.floor(getChallengeTier() / 4), 3, 8);
   const pairs = shuffle(items).slice(0, count);
   const cards = shuffle(pairs.flatMap((item, pair) => [{ pair, side: "left", label: item[leftKey] }, { pair, side: "right", label: item[rightKey] }]));
   let matched = 0;
@@ -768,8 +919,8 @@ function renderNepaliNumbers() { renderMatchGame(nepaliNumbers, "np", "en", "nep
 function showHint() {
   const hints = {
     memory: "Flip slowly and say each symbol out loud.", logic: "Look at what repeats or what number step is changing.", attention: "Scan row by row instead of jumping around.",
-    math: "Break big numbers into smaller friendly parts.", words: `The word begins with ${state.word.answer ? state.word.answer[0] : "a strong letter"}.`,
-    science: "Read every option before choosing.", typing: "Check spaces and spelling before pressing Enter.", oddOne: "Ask: what category do most items share?",
+    math: "Break big numbers into smaller friendly parts.", tugOfWar: "Use inverse operations: addition and subtraction undo each other; multiplication and division undo each other.", codeBreaker: "Exact means right digit and right spot. Close means the digit exists but is in another spot.", words: `The word begins with ${state.word.answer ? state.word.answer[0] : "a strong letter"}.`,
+    science: "Read every option before choosing.", typing: "Check spaces and spelling before pressing Enter.",
     colorCode: "Look at the color of the letters, not the word.", storyOrder: "Think first, next, last.",
     shapeLab: "Check the mission, then match either the shape or color.",
     treasurePath: "Move around blocked squares and plan two steps ahead.",

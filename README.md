@@ -6,20 +6,25 @@ The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each
 
 ## Games included
 
-- Memory Match: card matching for memory practice.
+- Memory Match: harder card matching that scales up to dense high-level boards.
 - Pattern Logic: shape and number sequence completion.
-- Focus Finder: visual scanning and attention control.
-- Number Quest: age-scaled arithmetic and missing-number challenges.
-- Word Builder: spelling and letter-order practice.
-- Science Spark: simple science quiz questions.
-- Typing Trail: reading and keyboard confidence practice.
-- Odd One Out: category reasoning and flexible thinking.
+- Focus Finder: visual scanning with more targets and distractors by level.
+- Number Quest: adaptive arithmetic including addition, subtraction, multiplication, division, missing numbers, and multi-step problems.
+- Math Tug of War: single-player vs bot or two-player math race where correct answers pull the rope.
+- Code Breaker: number-code deduction inspired by popular daily puzzle formats.
+- Word Builder: anagram-style spelling with decoy letters at higher levels.
+- Science Spark: broader science quiz questions from simple facts to harder concepts.
+- Typing Trail: one-line and two-line typing practice with exact spelling.
 - Color Code: attention control inspired by Stroop-style play.
 - Story Order: sequencing, planning, and comprehension practice.
+- Shape Lab: shape and color matching missions.
+- Path Quest: move-limited route planning with generated obstacle paths.
+- Quick Count: fast visual counting with distractors.
+- X O Challenge: tic-tac-toe strategy with a stronger bot at higher levels.
+- Number Sort: ordered-number logic practice.
 - नेपाली अक्षर: Nepali alphabet sequence game.
-- नेपाली शब्द: Nepali word and meaning matching game.
+- नेपाली शब्द: expanded Nepali word and meaning matching game.
 - नेपाली अंक: Nepali number recognition game.
-
 ## Adaptive level system
 
 - 2,400 virtual levels are tracked in the session UI.

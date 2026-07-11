@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="BrightMinds Brain Gym mini-games." />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.youtube.com https://*.youtube.com https://*.googlevideo.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" />
     <title>BrightMinds Brain Gym</title>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
     <link rel="apple-touch-icon" href="assets/logo.svg" />
@@ -32,30 +32,31 @@
             <option value="senior">11-16</option>
           </select>
         </label>
-        <button id="audio-toggle" class="toggle-field audio-button" type="button" aria-pressed="false"><span class="audio-check">□</span><span>Audio</span></button>
+        <button id="audio-toggle" class="toggle-field audio-button" type="button" aria-pressed="false"><span class="audio-check">[ ]</span><span>Audio</span></button>
         <div id="audio-player" class="audio-player" aria-hidden="true"></div>
         <div class="stat-pill" aria-live="polite"><span>Stars</span><strong id="total-stars">0</strong></div>
       </section>
 
       <section class="game-tabs" aria-label="Choose a brain game">
-        <button class="tab active" data-game="memory">Memory</button>
-        <button class="tab" data-game="logic">Pattern</button>
-        <button class="tab" data-game="attention">Focus</button>
-        <button class="tab" data-game="math">Numbers</button>
-        <button class="tab" data-game="words">Words</button>
-        <button class="tab" data-game="science">Science</button>
-        <button class="tab" data-game="typing">Typing</button>
-        <button class="tab" data-game="oddOne">Odd One</button>
-        <button class="tab" data-game="colorCode">Color Code</button>
-        <button class="tab" data-game="storyOrder">Story Order</button>
-        <button class="tab" data-game="shapeLab">Shape Lab</button>
-        <button class="tab" data-game="treasurePath">Path Quest</button>
-        <button class="tab" data-game="quickCount">Quick Count</button>
-        <button class="tab" data-game="xoGame">X O</button>
-        <button class="tab" data-game="numberSort">Number Sort</button>
-        <button class="tab nepali" data-game="nepaliLetters">क ख ग</button>
-        <button class="tab nepali" data-game="nepaliWords">नेपाली शब्द</button>
-        <button class="tab nepali" data-game="nepaliNumbers">नेपाली अंक</button>
+        <button class="tab active" data-game="memory" data-icon="M">Memory</button>
+        <button class="tab" data-game="logic" data-icon="P">Pattern</button>
+        <button class="tab" data-game="attention" data-icon="F">Focus</button>
+        <button class="tab" data-game="math" data-icon="+">Numbers</button>
+        <button class="tab" data-game="tugOfWar" data-icon="DIV">Tug of War</button>
+        <button class="tab" data-game="codeBreaker" data-icon="#">Code Breaker</button>
+        <button class="tab" data-game="words" data-icon="W">Words</button>
+        <button class="tab" data-game="science" data-icon="S">Science</button>
+        <button class="tab" data-game="typing" data-icon="T">Typing</button>
+        <button class="tab" data-game="colorCode" data-icon="C">Color Code</button>
+        <button class="tab" data-game="storyOrder" data-icon="1">Story Order</button>
+        <button class="tab" data-game="shapeLab" data-icon="DIA">Shape Lab</button>
+        <button class="tab" data-game="treasurePath" data-icon="GO">Path Quest</button>
+        <button class="tab" data-game="quickCount" data-icon="9">Quick Count</button>
+        <button class="tab" data-game="xoGame" data-icon="XO">X O</button>
+        <button class="tab" data-game="numberSort" data-icon="123">Number Sort</button>
+        <button class="tab nepali" data-game="nepaliLetters" data-icon="क">क ख ग</button>
+        <button class="tab nepali" data-game="nepaliWords" data-icon="ने">नेपाली शब्द</button>
+        <button class="tab nepali" data-game="nepaliNumbers" data-icon="१">नेपाली अंक</button>
       </section>
 
       <section class="game-status" aria-label="Game progress">
