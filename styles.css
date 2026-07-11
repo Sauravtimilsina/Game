@@ -309,3 +309,63 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
   .left-hand { left: calc(35% + (var(--rope) * 34%)); }
   .right-hand { left: calc(65% + (var(--rope) * 34%)); }
 }
+.tug-side.active-side .tug-person { animation: pullingLean 0.7s ease-in-out infinite alternate; }
+.tug-side.p1.active-side .tug-person { transform-origin: 50% 85%; }
+.tug-side.p2.active-side .tug-person { transform-origin: 50% 85%; }
+.tug-side.active-side strong { transform: scale(1.04); }
+.rope-track::after { content: ""; position: absolute; left: 18px; right: 18px; top: 39px; height: 14px; border-radius: 999px; background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(255,255,255,0.45) 14px 18px); opacity: 0.55; pointer-events: none; }
+.rope-marker, .rope-hand { animation: ropeTension 0.55s ease-in-out infinite alternate; }
+.tug-winner { position: relative; overflow: hidden; }
+.tug-winner h3, .tug-winner p, .tug-winner button { position: relative; z-index: 2; }
+.celebration-field { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+.celebration-piece {
+  position: absolute;
+  left: calc(50% + var(--x));
+  bottom: -22px;
+  width: 12px;
+  height: 18px;
+  border-radius: 12px 12px 2px 12px;
+  background: #ffc94d;
+  opacity: 0;
+  transform: translateY(0) rotate(0deg);
+  animation: flyCelebration 2.8s ease-out infinite;
+  animation-delay: var(--delay);
+}
+.piece-0 { background: #ffc94d; border-radius: 50% 50% 4px 50%; }
+.piece-1 { background: #19b893; width: 10px; height: 10px; border-radius: 50%; }
+.piece-2 { background: #ef5d88; border-radius: 50% 4px 50% 50%; }
+.piece-3 { background: #3d6df6; width: 8px; height: 20px; border-radius: 8px; }
+.piece-4 { background: #ffffff; border: 2px solid rgba(23,32,51,0.12); }
+.piece-5 { background: #7b61ff; width: 14px; height: 14px; border-radius: 4px; }
+.blue-win .celebration-piece:nth-child(3n) { background: #3d6df6; }
+.red-win .celebration-piece:nth-child(3n) { background: #ef5d88; }
+.blue-win h3 { animation: winnerTitleBlue 0.7s ease-in-out infinite alternate; }
+.red-win h3 { animation: winnerTitleRed 0.7s ease-in-out infinite alternate; }
+
+@keyframes pullingLean {
+  from { transform: translateX(0) rotate(-8deg); }
+  to { transform: translateX(-5px) rotate(-15deg); }
+}
+.tug-side.p2.active-side .tug-person { animation-name: pullingLeanRight; }
+@keyframes pullingLeanRight {
+  from { transform: scaleX(-1) translateX(0) rotate(-8deg); }
+  to { transform: scaleX(-1) translateX(-5px) rotate(-15deg); }
+}
+@keyframes ropeTension {
+  from { filter: saturate(1); }
+  to { filter: saturate(1.3) brightness(1.04); }
+}
+@keyframes flyCelebration {
+  0% { opacity: 0; transform: translateY(0) translateX(0) rotate(0deg) scale(0.65); }
+  12% { opacity: 1; }
+  72% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-245px) translateX(calc(var(--spin) * 70px)) rotate(calc(var(--spin) * 540deg)) scale(1.1); }
+}
+@keyframes winnerTitleBlue {
+  from { text-shadow: 0 0 0 rgba(61,109,246,0); transform: translateY(0); }
+  to { text-shadow: 0 14px 34px rgba(61,109,246,0.28); transform: translateY(-4px); }
+}
+@keyframes winnerTitleRed {
+  from { text-shadow: 0 0 0 rgba(239,93,136,0); transform: translateY(0); }
+  to { text-shadow: 0 14px 34px rgba(239,93,136,0.28); transform: translateY(-4px); }
+}

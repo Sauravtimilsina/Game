@@ -469,8 +469,8 @@ function renderMath() {
 function renderTugOfWar() {
   state.completed = false;
   const winningScore = 10;
-  const questionSeconds = 30;
-  const botDelay = clamp(7000 - getChallengeTier() * 360 - state.streak * 80, 2800, 7200);
+  const questionSeconds = 20;
+  const botDelay = clamp(5600 - getChallengeTier() * 300 - state.streak * 70, 2200, 5600);
   let scores = { 1: 0, 2: 0 };
   let activePlayer = 1;
   let mode = "single";
@@ -516,7 +516,8 @@ function renderTugOfWar() {
     state.completed = true;
     const name = playerName(player);
     board.classList.add(player === 1 ? "p1-won" : "p2-won");
-    questionBox.innerHTML = `<section class="tug-winner ${player === 1 ? "blue-win" : "red-win"}"><h3>${name} wins!</h3><p>${name} answered ${winningScore} questions correctly.</p><button class="primary-button" data-action="restart-tug">Restart match</button></section>`;
+        const celebrationPieces = Array.from({ length: 34 }, (_, index) => `<span class="celebration-piece piece-${index % 6}" style="--x:${(index % 11) * 9 - 45}%; --delay:${(index % 9) * 0.12}s; --spin:${index % 2 === 0 ? 1 : -1};"></span>`).join("");
+    questionBox.innerHTML = `<section class="tug-winner ${player === 1 ? "blue-win" : "red-win"}"><div class="celebration-field" aria-hidden="true">${celebrationPieces}</div><h3>${name} wins!</h3><p>${name} answered ${winningScore} questions correctly.</p><button class="primary-button" data-action="restart-tug">Restart match</button></section>`;
     setFeedback(`${name} wins the Math Tug of War!`);
     state.attempted.tugOfWar += 1;
     state.correct.tugOfWar += 1;

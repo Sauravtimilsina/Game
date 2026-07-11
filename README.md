@@ -10,7 +10,7 @@ The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each
 - Pattern Logic: shape and number sequence completion.
 - Focus Finder: visual scanning with more targets and distractors by level.
 - Number Quest: adaptive arithmetic including addition, subtraction, multiplication, division, missing numbers, and multi-step problems.
-- Math Tug of War: single-player vs bot or two-player turn match with blue Player 1, red Player 2, 30-second questions, timeout/pass rules, three-wrong pass rules, rope movement on correct answers, and first to 10 correct answers wins.
+- Math Tug of War: single-player vs bot or two-player turn match with blue Player 1, red Player 2, 20-second questions, timeout/pass rules, three-wrong pass rules, rope movement on correct answers, and first to 10 correct answers wins.
 - Code Breaker: number-code deduction inspired by popular daily puzzle formats.
 - Word Builder: anagram-style spelling with decoy letters at higher levels.
 - Science Spark: broader science quiz questions from simple facts to harder concepts.
