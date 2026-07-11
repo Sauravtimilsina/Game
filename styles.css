@@ -281,3 +281,31 @@ select, .typing-input { width: 100%; min-height: 50px; padding: 0 14px; border: 
   .player-answer-row { justify-content: start; }
   .code-row { grid-template-columns: 1fr; }
 }
+.tug-side.p1, .tug-player-panel.player-1 { border-color: rgba(61, 109, 246, 0.5); background: linear-gradient(135deg, #eef4ff, #ffffff); color: #264bb7; }
+.tug-side.p2, .tug-player-panel.player-2 { border-color: rgba(239, 93, 136, 0.5); background: linear-gradient(135deg, #fff0f5, #ffffff); color: #bb3158; }
+.tug-side.active-side { box-shadow: 0 0 0 4px rgba(255, 201, 77, 0.35), 0 16px 32px rgba(31, 48, 78, 0.14); transform: translateY(-2px); }
+.tug-player-panel.active-turn { box-shadow: 0 0 0 4px rgba(255, 201, 77, 0.28), 0 14px 34px rgba(31, 48, 78, 0.12); }
+.tug-player-panel.waiting-turn { opacity: 0.72; }
+.rope-track { background: linear-gradient(90deg, rgba(61,109,246,0.18), #fff3bf 50%, rgba(239,93,136,0.2)); }
+.rope-track::before { background: linear-gradient(90deg, #3d6df6 0 45%, #8b6a38 45% 55%, #ef5d88 55% 100%); }
+.rope-marker { left: calc(50% + (var(--rope) * 38%)); }
+.rope-hand { position: absolute; top: 34px; width: 22px; height: 22px; border-radius: 50%; border: 4px solid white; z-index: 2; transition: left 0.25s ease; box-shadow: 0 8px 14px rgba(31, 48, 78, 0.18); }
+.left-hand { left: calc(38% + (var(--rope) * 38%)); background: #3d6df6; }
+.right-hand { left: calc(62% + (var(--rope) * 38%)); background: #ef5d88; }
+.tug-scoreboard .p1-score { color: #264bb7; border-color: rgba(61, 109, 246, 0.36); background: #eef4ff; }
+.tug-scoreboard .p2-score { color: #bb3158; border-color: rgba(239, 93, 136, 0.36); background: #fff0f5; }
+.tug-winner { grid-column: 1 / -1; display: grid; justify-items: center; gap: 12px; min-height: 230px; padding: 28px; border-radius: 18px; border: 3px solid var(--line); background: white; text-align: center; animation: winnerPop 0.55s ease both; }
+.tug-winner h3 { margin: 0; font-size: clamp(2rem, 6vw, 4rem); line-height: 1; }
+.tug-winner p { margin: 0; color: var(--muted); font-weight: 900; }
+.tug-winner.blue-win { color: #264bb7; background: linear-gradient(135deg, #eef4ff, #ffffff); border-color: rgba(61, 109, 246, 0.45); }
+.tug-winner.red-win { color: #bb3158; background: linear-gradient(135deg, #fff0f5, #ffffff); border-color: rgba(239, 93, 136, 0.45); }
+.p1-won .left-person, .p2-won .right-person { animation: winnerDance 0.45s ease-in-out infinite alternate; }
+@keyframes winnerPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes winnerDance { from { transform: translateY(0) rotate(-8deg); } to { transform: translateY(-8px) rotate(7deg); } }
+.p2-won .right-person { animation-name: winnerDanceRight; }
+@keyframes winnerDanceRight { from { transform: scaleX(-1) translateY(0) rotate(-8deg); } to { transform: scaleX(-1) translateY(-8px) rotate(7deg); } }
+
+@media (max-width: 720px) {
+  .left-hand { left: calc(35% + (var(--rope) * 34%)); }
+  .right-hand { left: calc(65% + (var(--rope) * 34%)); }
+}

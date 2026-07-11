@@ -99,7 +99,7 @@ const gameInfo = {
   logic: { title: "Pattern Logic", skill: "Logic", text: "Study the sequence, then choose the missing piece." },
   attention: { title: "Focus Finder", skill: "Attention", text: "Find every highlighted target before your focus slips." },
   math: { title: "Number Quest", skill: "Numbers", text: "Solve multi-step arithmetic that gets sharper as your level climbs." },
-  tugOfWar: { title: "Math Tug of War", skill: "Numbers", text: "Single player races the bot. Multiplayer lets two players pull the rope by solving first." },
+  tugOfWar: { title: "Math Tug of War", skill: "Numbers", text: "Answer on your turn. Correct answers pull the rope; timeouts pass. First to 10 wins." },
   codeBreaker: { title: "Code Breaker", skill: "Logic", text: "Guess the secret number code using exact and close-position clues." },
   words: { title: "Word Builder", skill: "Words", text: "Tap letters in order to rebuild the hidden word." },
   science: { title: "Science Spark", skill: "Learning", text: "Answer a friendly science question and learn one fact at a time." },
@@ -467,55 +467,108 @@ function renderMath() {
   wireAnswers(String(challenge.answer), "math", "Number quest complete. Math star earned!");
 }
 function renderTugOfWar() {
-  const winningPulls = state.age === "little" ? 3 : getChallengeTier() > 4 ? 5 : 4;
+  state.completed = false;
+  const winningScore = 10;
   const questionSeconds = 30;
-  const botDelay = clamp(9000 - getChallengeTier() * 520 - state.streak * 120, 3200, 9000);
-  let rope = 0;
+  const botDelay = clamp(7000 - getChallengeTier() * 360 - state.streak * 80, 2800, 7200);
+  let scores = { 1: 0, 2: 0 };
+  let activePlayer = 1;
   let mode = "single";
+  let questionTimer = null;
   let botTimer = null;
-  const timers = [];
   state.tugSession = (state.tugSession || 0) + 1;
   const session = state.tugSession;
 
   board.className = "game-board tug-panel";
-  board.innerHTML = `<div class="mode-row"><button class="answer-button active" data-mode="single">Single vs Bot</button><button class="answer-button" data-mode="multi">Two Players</button></div><div class="tug-scoreboard"><span>Player 1 win: +${winningPulls}</span><span>Center: 0</span><span class="p2-win-label">Bot win: -${winningPulls}</span></div><div class="tug-arena"><div class="tug-side p1"><span class="tug-person left-person"></span><strong>Player 1</strong></div><div class="rope-track" aria-label="Tug of war rope"><span class="win-line left-win">WIN</span><span class="center-line">CENTER</span><span class="win-line right-win">WIN</span><span class="rope-marker" style="--rope:0"><span class="rope-knot"></span></span></div><div class="tug-side p2"><span class="tug-person right-person"></span><strong>Bot</strong></div></div><div class="tug-question split"></div>`;
+  board.innerHTML = `<div class="mode-row"><button class="answer-button active" data-mode="single">Single vs Bot</button><button class="answer-button" data-mode="multi">Two Players</button></div><div class="tug-scoreboard"><span class="p1-score">Player 1: 0 / ${winningScore}</span><span>Center line</span><span class="p2-score">Bot: 0 / ${winningScore}</span></div><div class="tug-arena"><div class="tug-side p1"><span class="tug-person left-person"></span><strong>Player 1</strong></div><div class="rope-track" aria-label="Tug of war rope"><span class="win-line left-win">P1 WIN</span><span class="center-line">CENTER</span><span class="win-line right-win">P2 WIN</span><span class="rope-hand left-hand"></span><span class="rope-hand right-hand"></span><span class="rope-marker" style="--rope:0"><span class="rope-knot"></span></span></div><div class="tug-side p2"><span class="tug-person right-person"></span><strong>Bot</strong></div></div><div class="tug-question split"></div>`;
 
   const modeButtons = [...board.querySelectorAll("[data-mode]")];
   const marker = board.querySelector(".rope-marker");
-  const p2Label = board.querySelector(".p2 strong");
-  const p2WinLabel = board.querySelector(".p2-win-label");
+  const leftHand = board.querySelector(".left-hand");
+  const rightHand = board.querySelector(".right-hand");
+  const p1ScoreLabel = board.querySelector(".p1-score");
+  const p2ScoreLabel = board.querySelector(".p2-score");
+  const p2Name = board.querySelector(".p2 strong");
+  const rightWin = board.querySelector(".right-win");
   const questionBox = board.querySelector(".tug-question");
 
   function isLive() { return !state.completed && state.game === "tugOfWar" && state.tugSession === session; }
   function clearTugTimers() {
+    clearInterval(questionTimer);
     clearTimeout(botTimer);
-    while (timers.length) clearInterval(timers.pop());
+    questionTimer = null;
+    botTimer = null;
   }
-  function updateRope() {
-    marker.style.setProperty("--rope", rope);
-    if (rope >= winningPulls) { clearTugTimers(); finishRound("tugOfWar", "Player 1 crossed the winning mark!"); }
-    if (rope <= -winningPulls) {
-      clearTugTimers();
-      if (mode === "single") { miss("Bot reached the winning mark. New match starts now."); setTimeout(renderTugOfWar, 950); }
-      else finishRound("tugOfWar", "Player 2 crossed the winning mark!");
-    }
+  function playerName(player) { return player === 1 ? "Player 1" : mode === "single" ? "Bot" : "Player 2"; }
+  function ropeOffset() { return clamp((scores[1] - scores[2]) / winningScore, -1, 1); }
+  function updateMatchView() {
+    const offset = ropeOffset();
+    marker.style.setProperty("--rope", offset);
+    leftHand.style.setProperty("--rope", offset);
+    rightHand.style.setProperty("--rope", offset);
+    p1ScoreLabel.textContent = `Player 1: ${scores[1]} / ${winningScore}`;
+    p2ScoreLabel.textContent = `${playerName(2)}: ${scores[2]} / ${winningScore}`;
+    board.querySelector(".p1").classList.toggle("active-side", activePlayer === 1);
+    board.querySelector(".p2").classList.toggle("active-side", activePlayer === 2);
   }
-  function pullFor(player, reason) {
-    if (!isLive()) return;
-    rope += player === 1 ? 1 : -1;
-    setFeedback(`${player === 1 ? "Player 1" : mode === "single" ? "Bot" : "Player 2"} pulls! ${reason}`);
+  function showWinner(player) {
+    clearTugTimers();
+    state.completed = true;
+    const name = playerName(player);
+    board.classList.add(player === 1 ? "p1-won" : "p2-won");
+    questionBox.innerHTML = `<section class="tug-winner ${player === 1 ? "blue-win" : "red-win"}"><h3>${name} wins!</h3><p>${name} answered ${winningScore} questions correctly.</p><button class="primary-button" data-action="restart-tug">Restart match</button></section>`;
+    setFeedback(`${name} wins the Math Tug of War!`);
+    state.attempted.tugOfWar += 1;
+    state.correct.tugOfWar += 1;
+    state.streak += 1;
+    state.score += 25 + getChallengeTier() * 3;
+    state.stars.tugOfWar += 1;
+    if (state.levels.tugOfWar < TOTAL_LEVELS) state.levels.tugOfWar += 1;
     updateStats();
-    updateRope();
+    board.querySelector("[data-action='restart-tug']").addEventListener("click", renderTugOfWar);
   }
-  function makePlayerPanel(player) {
+  function awardPoint(player) {
+    scores[player] += 1;
+    activePlayer = player === 1 ? 2 : 1;
+    setFeedback(`${playerName(player)} correct. Rope moves to ${playerName(player)}.`);
+    state.moves += 1;
+    updateMatchView();
+    updateStats();
+    if (scores[player] >= winningScore) showWinner(player);
+    else setTimeout(startTurn, 650);
+  }
+  function passTurn(reason) {
+    setFeedback(`${reason} Turn passes to ${playerName(activePlayer === 1 ? 2 : 1)}. Rope stays where it is.`, false);
+    activePlayer = activePlayer === 1 ? 2 : 1;
+    updateMatchView();
+    setTimeout(startTurn, 650);
+  }
+  function makePlayerPanel(player, active) {
     const panel = document.createElement("section");
-    panel.className = `tug-player-panel player-${player}`;
-    panel.innerHTML = `<div class="tug-panel-head"><strong>${player === 1 ? "Player 1" : mode === "single" ? "Bot" : "Player 2"}</strong><span class="timer">30s</span><span class="mistakes">Wrong: 0/3</span></div><p class="question-text small-question"></p><div class="answer-row"></div>`;
+    panel.className = `tug-player-panel player-${player} ${active ? "active-turn" : "waiting-turn"}`;
+    panel.innerHTML = `<div class="tug-panel-head"><strong>${playerName(player)}</strong><span class="timer">${active ? `${questionSeconds}s` : "Waiting"}</span><span class="mistakes">Wrong: 0/3</span></div><p class="question-text small-question"></p><div class="answer-row"></div>`;
     questionBox.append(panel);
     return panel;
   }
-  function startQuestion(panel, player) {
-    if (!isLive()) return;
+  function renderWaiting(panel, player) {
+    panel.querySelector(".question-text").textContent = `${playerName(player)} waits for the pass.`;
+    panel.querySelector(".answer-row").innerHTML = `<span class="bot-status">No move until your turn</span>`;
+    panel.querySelector(".mistakes").textContent = "Wrong: 0/3";
+  }
+  function startBotTurn(panel) {
+    panel.querySelector(".question-text").textContent = `Bot is solving. You get the next question if it misses the clock.`;
+    panel.querySelector(".answer-row").innerHTML = `<span class="bot-status">Bot thinking...</span>`;
+    botTimer = setTimeout(() => {
+      if (!isLive()) return;
+      awardPoint(2);
+    }, botDelay);
+    questionTimer = setTimeout(() => {
+      if (!isLive()) return;
+      clearTimeout(botTimer);
+      passTurn("Bot ran out of time.");
+    }, questionSeconds * 1000);
+  }
+  function startHumanTurn(panel, player) {
     let seconds = questionSeconds;
     let wrong = 0;
     const challenge = makeArithmeticChallenge();
@@ -526,82 +579,73 @@ function renderTugOfWar() {
     const row = panel.querySelector(".answer-row");
     question.textContent = challenge.prompt;
     timer.textContent = `${seconds}s`;
+    timer.classList.remove("danger");
     mistakes.textContent = "Wrong: 0/3";
     row.innerHTML = options.map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("");
-
-    const interval = setInterval(() => {
-      if (!isLive()) { clearInterval(interval); return; }
+    questionTimer = setInterval(() => {
+      if (!isLive()) { clearInterval(questionTimer); return; }
       seconds -= 1;
       timer.textContent = `${seconds}s`;
       timer.classList.toggle("danger", seconds <= 5);
       if (seconds <= 0) {
-        clearInterval(interval);
-        setFeedback(`${player === 1 ? "Player 1" : "Player 2"} ran out of time. New question!`, false);
-        startQuestion(panel, player);
+        clearInterval(questionTimer);
+        passTurn(`${playerName(player)} ran out of time.`);
       }
     }, 1000);
-    timers.push(interval);
-
     row.querySelectorAll("button").forEach((button) => {
       button.addEventListener("click", () => {
-        if (!isLive()) return;
-        state.moves += 1;
+        if (!isLive() || button.disabled) return;
         if (Number(button.dataset.answer) === challenge.answer) {
-          clearInterval(interval);
+          clearInterval(questionTimer);
           row.querySelectorAll("button").forEach((item) => item.disabled = true);
-          pullFor(player, "Correct answer.");
-          if (isLive()) setTimeout(() => startQuestion(panel, player), 520);
+          awardPoint(player);
           return;
         }
         wrong += 1;
         button.classList.add("wrong");
         button.disabled = true;
         mistakes.textContent = `Wrong: ${wrong}/3`;
-        miss(wrong >= 3 ? "Three wrong answers. Other side gets the pull." : "Wrong answer. Try again before time runs out.");
         if (wrong >= 3) {
-          clearInterval(interval);
-          pullFor(player === 1 ? 2 : 1, "Penalty pull.");
-          if (isLive()) setTimeout(() => startQuestion(panel, player), 520);
-        }
-        updateStats();
+          clearInterval(questionTimer);
+          passTurn(`${playerName(player)} had 3 wrong answers.`);
+        } else setFeedback("Wrong answer. Try again before time runs out.", false);
       });
     });
   }
-  function startBot() {
-    clearTimeout(botTimer);
-    if (mode !== "single" || !isLive()) return;
-    botTimer = setTimeout(() => {
-      pullFor(2, "Bot solved its side.");
-      if (isLive()) startBot();
-    }, botDelay);
-  }
-  function startMatch() {
+  function startTurn() {
+    if (!isLive()) return;
     clearTugTimers();
-    rope = 0;
-    updateRope();
+    updateMatchView();
     questionBox.innerHTML = "";
-    const p1Panel = makePlayerPanel(1);
-    startQuestion(p1Panel, 1);
-    if (mode === "multi") {
-      const p2Panel = makePlayerPanel(2);
-      startQuestion(p2Panel, 2);
+    const p1Panel = makePlayerPanel(1, activePlayer === 1);
+    const p2Panel = makePlayerPanel(2, activePlayer === 2);
+    if (activePlayer === 1) {
+      startHumanTurn(p1Panel, 1);
+      renderWaiting(p2Panel, 2);
     } else {
-      const botPanel = makePlayerPanel(2);
-      botPanel.classList.add("bot-panel");
-      botPanel.querySelector(".question-text").textContent = `Bot pulls every ${Math.round(botDelay / 1000)}s. Beat it with correct answers.`;
-      botPanel.querySelector(".answer-row").innerHTML = `<span class="bot-status">Auto solver active</span>`;
-      startBot();
+      renderWaiting(p1Panel, 1);
+      if (mode === "single") startBotTurn(p2Panel);
+      else startHumanTurn(p2Panel, 2);
     }
+  }
+  function resetMatch() {
+    state.completed = false;
+    clearTugTimers();
+    scores = { 1: 0, 2: 0 };
+    activePlayer = 1;
+    board.classList.remove("p1-won", "p2-won");
+    updateMatchView();
+    startTurn();
   }
 
   modeButtons.forEach((button) => button.addEventListener("click", () => {
     mode = button.dataset.mode;
     modeButtons.forEach((item) => item.classList.toggle("active", item === button));
-    p2Label.textContent = mode === "single" ? "Bot" : "Player 2";
-    p2WinLabel.textContent = `${mode === "single" ? "Bot" : "Player 2"} win: -${winningPulls}`;
-    startMatch();
+    p2Name.textContent = mode === "single" ? "Bot" : "Player 2";
+    rightWin.textContent = mode === "single" ? "BOT WIN" : "P2 WIN";
+    resetMatch();
   }));
-  startMatch();
+  resetMatch();
 }
 function renderCodeBreaker() {
   const length = state.age === "little" ? 3 : getChallengeTier() > 4 ? 5 : 4;
