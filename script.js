@@ -467,62 +467,141 @@ function renderMath() {
   wireAnswers(String(challenge.answer), "math", "Number quest complete. Math star earned!");
 }
 function renderTugOfWar() {
-  const target = state.age === "little" ? 2 : 3;
+  const winningPulls = state.age === "little" ? 3 : getChallengeTier() > 4 ? 5 : 4;
+  const questionSeconds = 30;
+  const botDelay = clamp(9000 - getChallengeTier() * 520 - state.streak * 120, 3200, 9000);
   let rope = 0;
   let mode = "single";
   let botTimer = null;
+  const timers = [];
+  state.tugSession = (state.tugSession || 0) + 1;
+  const session = state.tugSession;
+
   board.className = "game-board tug-panel";
-  board.innerHTML = `<div class="mode-row"><button class="answer-button active" data-mode="single">Single vs Bot</button><button class="answer-button" data-mode="multi">Two Players</button></div><div class="tug-arena"><div class="tug-side p1">Player 1</div><div class="rope-track"><span class="rope-marker" style="--rope:0"></span></div><div class="tug-side p2">Bot</div></div><div class="tug-question"></div>`;
+  board.innerHTML = `<div class="mode-row"><button class="answer-button active" data-mode="single">Single vs Bot</button><button class="answer-button" data-mode="multi">Two Players</button></div><div class="tug-scoreboard"><span>Player 1 win: +${winningPulls}</span><span>Center: 0</span><span class="p2-win-label">Bot win: -${winningPulls}</span></div><div class="tug-arena"><div class="tug-side p1"><span class="tug-person left-person"></span><strong>Player 1</strong></div><div class="rope-track" aria-label="Tug of war rope"><span class="win-line left-win">WIN</span><span class="center-line">CENTER</span><span class="win-line right-win">WIN</span><span class="rope-marker" style="--rope:0"><span class="rope-knot"></span></span></div><div class="tug-side p2"><span class="tug-person right-person"></span><strong>Bot</strong></div></div><div class="tug-question split"></div>`;
+
   const modeButtons = [...board.querySelectorAll("[data-mode]")];
   const marker = board.querySelector(".rope-marker");
-  const p2Label = board.querySelector(".p2");
+  const p2Label = board.querySelector(".p2 strong");
+  const p2WinLabel = board.querySelector(".p2-win-label");
   const questionBox = board.querySelector(".tug-question");
+
+  function isLive() { return !state.completed && state.game === "tugOfWar" && state.tugSession === session; }
+  function clearTugTimers() {
+    clearTimeout(botTimer);
+    while (timers.length) clearInterval(timers.pop());
+  }
   function updateRope() {
     marker.style.setProperty("--rope", rope);
-    if (rope >= target) finishRound("tugOfWar", "Player 1 pulled the rope across!");
-    if (rope <= -target) {
-      if (mode === "single") { miss("The bot pulled faster. New tug starts now."); setTimeout(renderTugOfWar, 900); }
-      else finishRound("tugOfWar", "Player 2 pulled the rope across!");
+    if (rope >= winningPulls) { clearTugTimers(); finishRound("tugOfWar", "Player 1 crossed the winning mark!"); }
+    if (rope <= -winningPulls) {
+      clearTugTimers();
+      if (mode === "single") { miss("Bot reached the winning mark. New match starts now."); setTimeout(renderTugOfWar, 950); }
+      else finishRound("tugOfWar", "Player 2 crossed the winning mark!");
     }
   }
-  function nextProblem() {
-    if (state.completed) return;
-    clearTimeout(botTimer);
+  function pullFor(player, reason) {
+    if (!isLive()) return;
+    rope += player === 1 ? 1 : -1;
+    setFeedback(`${player === 1 ? "Player 1" : mode === "single" ? "Bot" : "Player 2"} pulls! ${reason}`);
+    updateStats();
+    updateRope();
+  }
+  function makePlayerPanel(player) {
+    const panel = document.createElement("section");
+    panel.className = `tug-player-panel player-${player}`;
+    panel.innerHTML = `<div class="tug-panel-head"><strong>${player === 1 ? "Player 1" : mode === "single" ? "Bot" : "Player 2"}</strong><span class="timer">30s</span><span class="mistakes">Wrong: 0/3</span></div><p class="question-text small-question"></p><div class="answer-row"></div>`;
+    questionBox.append(panel);
+    return panel;
+  }
+  function startQuestion(panel, player) {
+    if (!isLive()) return;
+    let seconds = questionSeconds;
+    let wrong = 0;
     const challenge = makeArithmeticChallenge();
     const options = makeHardNumberOptions(challenge.answer, state.age === "little" ? 4 : 5);
-    const rows = mode === "single" ? ["Player 1"] : ["Player 1", "Player 2"];
-    questionBox.innerHTML = `<p class="question-text small-question">${challenge.prompt}</p>${rows.map((name, row) => `<div class="player-answer-row"><strong>${name}</strong>${options.map((item) => `<button class="answer-button" data-player="${row === 0 ? 1 : 2}" data-answer="${item}">${item}</button>`).join("")}</div>`).join("")}`;
-    questionBox.querySelectorAll("[data-answer]").forEach((button) => {
+    const question = panel.querySelector(".question-text");
+    const timer = panel.querySelector(".timer");
+    const mistakes = panel.querySelector(".mistakes");
+    const row = panel.querySelector(".answer-row");
+    question.textContent = challenge.prompt;
+    timer.textContent = `${seconds}s`;
+    mistakes.textContent = "Wrong: 0/3";
+    row.innerHTML = options.map((item) => `<button class="answer-button" data-answer="${item}">${item}</button>`).join("");
+
+    const interval = setInterval(() => {
+      if (!isLive()) { clearInterval(interval); return; }
+      seconds -= 1;
+      timer.textContent = `${seconds}s`;
+      timer.classList.toggle("danger", seconds <= 5);
+      if (seconds <= 0) {
+        clearInterval(interval);
+        setFeedback(`${player === 1 ? "Player 1" : "Player 2"} ran out of time. New question!`, false);
+        startQuestion(panel, player);
+      }
+    }, 1000);
+    timers.push(interval);
+
+    row.querySelectorAll("button").forEach((button) => {
       button.addEventListener("click", () => {
-        if (state.completed) return;
+        if (!isLive()) return;
         state.moves += 1;
         if (Number(button.dataset.answer) === challenge.answer) {
-          clearTimeout(botTimer);
-          rope += button.dataset.player === "1" ? 1 : -1;
-          setFeedback(`${button.dataset.player === "1" ? "Player 1" : "Player 2"} pulls the rope!`);
-          updateStats();
-          updateRope();
-          if (!state.completed) setTimeout(nextProblem, 450);
-        } else {
-          button.classList.add("wrong");
-          miss("Wrong pull. The other side gets a chance.");
+          clearInterval(interval);
+          row.querySelectorAll("button").forEach((item) => item.disabled = true);
+          pullFor(player, "Correct answer.");
+          if (isLive()) setTimeout(() => startQuestion(panel, player), 520);
+          return;
         }
+        wrong += 1;
+        button.classList.add("wrong");
+        button.disabled = true;
+        mistakes.textContent = `Wrong: ${wrong}/3`;
+        miss(wrong >= 3 ? "Three wrong answers. Other side gets the pull." : "Wrong answer. Try again before time runs out.");
+        if (wrong >= 3) {
+          clearInterval(interval);
+          pullFor(player === 1 ? 2 : 1, "Penalty pull.");
+          if (isLive()) setTimeout(() => startQuestion(panel, player), 520);
+        }
+        updateStats();
       });
     });
-    if (mode === "single") {
-      const botDelay = clamp(5200 - getChallengeTier() * 380 - state.streak * 80, 1800, 5600);
-      botTimer = setTimeout(() => { rope -= 1; setFeedback("Bot solved one. Pull back fast!", false); updateRope(); if (!state.completed) nextProblem(); }, botDelay);
+  }
+  function startBot() {
+    clearTimeout(botTimer);
+    if (mode !== "single" || !isLive()) return;
+    botTimer = setTimeout(() => {
+      pullFor(2, "Bot solved its side.");
+      if (isLive()) startBot();
+    }, botDelay);
+  }
+  function startMatch() {
+    clearTugTimers();
+    rope = 0;
+    updateRope();
+    questionBox.innerHTML = "";
+    const p1Panel = makePlayerPanel(1);
+    startQuestion(p1Panel, 1);
+    if (mode === "multi") {
+      const p2Panel = makePlayerPanel(2);
+      startQuestion(p2Panel, 2);
+    } else {
+      const botPanel = makePlayerPanel(2);
+      botPanel.classList.add("bot-panel");
+      botPanel.querySelector(".question-text").textContent = `Bot pulls every ${Math.round(botDelay / 1000)}s. Beat it with correct answers.`;
+      botPanel.querySelector(".answer-row").innerHTML = `<span class="bot-status">Auto solver active</span>`;
+      startBot();
     }
   }
+
   modeButtons.forEach((button) => button.addEventListener("click", () => {
     mode = button.dataset.mode;
     modeButtons.forEach((item) => item.classList.toggle("active", item === button));
     p2Label.textContent = mode === "single" ? "Bot" : "Player 2";
-    rope = 0;
-    updateRope();
-    nextProblem();
+    p2WinLabel.textContent = `${mode === "single" ? "Bot" : "Player 2"} win: -${winningPulls}`;
+    startMatch();
   }));
-  nextProblem();
+  startMatch();
 }
 function renderCodeBreaker() {
   const length = state.age === "little" ? 3 : getChallengeTier() > 4 ? 5 : 4;
