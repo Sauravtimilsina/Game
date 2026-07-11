@@ -10,6 +10,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
     <link rel="apple-touch-icon" href="assets/logo.svg" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="games/ludo.css" />
   </head>
   <body>
     <div id="loading-screen" class="loading-screen" aria-label="Loading BrightMinds Brain Gym">
@@ -38,12 +39,12 @@
       </section>
 
       <section class="game-tabs" aria-label="Choose a brain game">
-        <button class="tab active" data-game="memory" data-icon="M">Memory</button>
+        <button class="tab active" data-game="ludo" data-icon="LUDO">Ludo</button>
+        <button class="tab" data-game="tugOfWar" data-icon="DIV">Tug of War</button>
+        <button class="tab" data-game="memory" data-icon="M">Memory</button>
         <button class="tab" data-game="logic" data-icon="P">Pattern</button>
         <button class="tab" data-game="attention" data-icon="F">Focus</button>
         <button class="tab" data-game="math" data-icon="+">Numbers</button>
-        <button class="tab" data-game="tugOfWar" data-icon="DIV">Tug of War</button>
-        <button class="tab" data-game="ludo" data-icon="LUDO">Ludo</button>
         <button class="tab" data-game="codeBreaker" data-icon="#">Code Breaker</button>
         <button class="tab" data-game="words" data-icon="W">Words</button>
         <button class="tab" data-game="science" data-icon="S">Science</button>
@@ -79,6 +80,7 @@
         <div class="reward-toast" id="reward-toast" role="status" aria-live="polite"></div>
       </section>
     </main>
+    <script src="games/ludo.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -2,7 +2,7 @@
 
 BrightMinds Brain Gym is a privacy-first, static, browser-based brain-training prototype for children aged 4 to 16.
 
-Version: 1.1.0
+Version: 1.1.1
 
 The app now uses an adaptive endless-play engine with 2,400 virtual levels. Each round generates fresh questions, answer choices, layouts, and distractors so replaying a level does not produce the same experience every time.
 
@@ -70,7 +70,7 @@ Research was used only for principles and requirements. The games, questions, vi
 
 ## How to run locally
 
-Open `index.html` in a browser. No build step is required because this version uses plain HTML, CSS, and JavaScript.
+Open `index.html` in a browser. No build step is required because this version uses plain HTML, CSS, and JavaScript. Game-specific code can live in the `games/` folder, such as the Ludo game engine and styles.
 
 ## Web deployment
 
